@@ -18,7 +18,7 @@ const KnowledgeComponent = () => {
           updatedAt: "2025-01-24"
         };
 
-        const response = await axios.post('http://localhost:9090/api/knowledge', body);
+        const response = await axios.post('http://localhost:8080/api/knowledge', body);
         setKnowledge(response.data); // Guarda la respuesta del servidor en el estado
       } catch (err) {
         setError(err.message);

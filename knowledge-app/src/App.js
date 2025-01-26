@@ -33,7 +33,7 @@ function App() {
 
     try {
       // Realiza la solicitud POST al servidor
-      const res = await axios.post('http://backend:9090/api/knowledge', formData);
+      const res = await axios.post('http://localhost:8080/api/knowledge', formData);
       setResponse(res.data); // Guarda la respuesta del servidor
     } catch (err) {
       setError(err.message); // Maneja errores
