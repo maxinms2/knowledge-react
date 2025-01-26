@@ -1,7 +1,7 @@
 package com.emejia.knowledge.services.impl;
 
-import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,8 +34,8 @@ public class KnowledgeServiceImpl implements IKnowledgeService{
         Knowledge knowledge = new Knowledge();
         knowledge.setTitle(dto.getTitle());
         knowledge.setContent(dto.getContent());
-        knowledge.setCreatedAt(dto.getCreatedAt());
-        knowledge.setUpdatedAt(dto.getUpdatedAt());
+        knowledge.setCreatedAt(new Date());
+        knowledge.setUpdatedAt(new Date());
         if (dto.getParentId() != null) {
             Knowledge parent = repository.findById(dto.getParentId())
                 .orElseThrow(() -> new EntityNotFoundException("Parent not found"));
