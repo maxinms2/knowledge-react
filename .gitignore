@@ -1,0 +1,8 @@
+# Ignorar node_modules y build para el proyecto React
+knowledge-app/node_modules
+knowledge-app/build
+
+# Ignorar directorios y archivos innecesarios de Spring Boot 3 jakarta
+knowledge/target
+knowledge/*.log
+
