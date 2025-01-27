@@ -111,3 +111,41 @@
     resize: vertical; /* Permitir redimensionar verticalmente */
     min-height: 100px; /* Altura mínima */
   }
+
+  /* Estilos para el formulario */
+.tree-form {
+  margin-bottom: 20px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.tree-form div {
+  margin-bottom: 10px;
+}
+
+.tree-form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.tree-form input {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.tree-form button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.tree-form button:hover {
+  background-color: #0056b3;
+}

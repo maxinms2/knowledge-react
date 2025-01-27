@@ -101,4 +101,11 @@ public class KnowledgeServiceImpl implements IKnowledgeService {
 
 	}
 
+	@Override
+	public List<KnowledgeDTO> findByText(String text) {
+		List<Knowledge> knowledges=repository.findByText(text);
+		List<KnowledgeDTO> knowledgesDTO=knowledges.stream().map(k->mapper.entityToDTO(k)).collect(Collectors.toList());
+		return knowledgesDTO;
+	}
+
 }

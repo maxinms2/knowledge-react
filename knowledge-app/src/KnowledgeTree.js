@@ -5,7 +5,8 @@ import './KnowledgeTree.css';
 import { API_URL} from './constants';
 
 const KnowledgeTree = () => {
-  
+  const [id, setId] = useState(1); 
+  const [deep, setdeep] = useState(10);
   const [treeData, setTreeData] = useState(null); // Datos del árbol
   const [loading, setLoading] = useState(true); // Estado de carga
   const [error, setError] = useState(null); // Manejo de errores
@@ -23,9 +24,10 @@ const KnowledgeTree = () => {
   // Función para obtener los datos del árbol
   const fetchTreeData = async () => {
     try {
+     
       const response = await axios.post(API_URL + '/api/knowledge/children', {
-        deep: 6,
-        id: 1
+        deep: deep,
+        id: id
       });
       setTreeData(response.data);
     } catch (err) {
@@ -64,8 +66,8 @@ const KnowledgeTree = () => {
 
   const deleteNode=async (id) => {
     try {
-      
         const response = await axios.delete(`${API_URL}/api/knowledge/${id}`); 
+
         await fetchTreeData();
     } catch (err) {
       setError(err.message); // Manejar errores
@@ -209,26 +211,7 @@ const CreateModal = ({ isOpen, onRequestClose, onSubmit }) => {
             required
           />
         </div>
-        <div>
-          <label>Created At:</label>
-          <input
-            type="date"
-            name="createdAt"
-            value={formData.createdAt}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Updated At:</label>
-          <input
-            type="date"
-            name="updatedAt"
-            value={formData.updatedAt}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
+
         <button type="submit">Crear</button>
         <button type="button" onClick={onRequestClose}>Cancelar</button>
       </form>
@@ -298,26 +281,7 @@ const EditModal = ({ isOpen, onRequestClose, node, onSubmit }) => {
             required
           />
         </div>
-        <div>
-          <label>Created At:</label>
-          <input
-            type="date"
-            name="createdAt"
-            value={formData.createdAt}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Updated At:</label>
-          <input
-            type="date"
-            name="updatedAt"
-            value={formData.updatedAt}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
+
         <button type="submit">Guardar</button>
         <button type="button" onClick={onRequestClose}>Cancelar</button>
       </form>

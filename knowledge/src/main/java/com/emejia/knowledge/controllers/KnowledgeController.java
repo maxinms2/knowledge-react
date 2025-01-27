@@ -1,5 +1,7 @@
 package com.emejia.knowledge.controllers;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,5 +42,11 @@ public class KnowledgeController {
 	@DeleteMapping("/{id}")
 	public void delete(@PathVariable("id") Long id) {
 		service.delete(id);
+	}
+	
+	@PostMapping("/find")
+	public ResponseEntity<List<KnowledgeDTO>> findText(@RequestBody KnowledgeDTO dto) {
+		List<KnowledgeDTO> knowledges= service.findByText(dto.getContent());
+		return ResponseEntity.ok(knowledges);
 	}
 }

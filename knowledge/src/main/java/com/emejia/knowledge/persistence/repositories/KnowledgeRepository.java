@@ -13,8 +13,9 @@ import jakarta.transaction.Transactional;
 public interface KnowledgeRepository extends JpaRepository<Knowledge, Long> {
     List<Knowledge> findByParentId(Long parentId); // Para obtener hijos directos
     
-//    @Transactional
-//    @Modifying
-//    @Query("DELETE FROM User u WHERE u.status = :status")
-//    void deleteByParent(Long parent);
+    @Query("select k FROM Knowledge k WHERE LOWER(k.title)"
+    + " LIKE LOWER(CONCAT('%', :text, '%')) OR LOWER(k.content) LIKE LOWER(CONCAT('%', :text, '%'))")
+    List<Knowledge>  findByText(String text);
+    
+    
 }

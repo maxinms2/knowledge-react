@@ -15,11 +15,12 @@ public interface IKnowledgeService {
 	
 	List<Knowledge> getTree(Long rootId);
 	
-//	Optional<Knowledge> getKnowledge(Long id);
 	
 	void delete(Long rootId);
 	
 	KnowledgeDTO getKnowledge(PositionTree positionTree);
 	
 	Knowledge nullObject();
+	
+	List<KnowledgeDTO>  findByText(String text);
 }
