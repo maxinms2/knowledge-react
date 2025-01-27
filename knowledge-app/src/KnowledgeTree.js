@@ -2,11 +2,30 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
 import './KnowledgeTree.css';
-import { API_URL,modalStyles } from './constants';
+import { API_URL, modalStyles } from './constants';
+import { useLocation, useSearchParams } from 'react-router-dom';
 
 const KnowledgeTree = () => {
-    const [id, setId] = useState(1);
-    const [deep, setDeep] = useState(10);
+    // Función para obtener valores iniciales
+    const getInitialValue = (key, defaultValue) => {
+        // Prioriza el estado de navegación
+        if (location.state?.[key] !== undefined) {
+            return location.state[key];
+        }
+
+        // Si no hay estado, busca en los parámetros de la URL
+        const urlValue = searchParams.get(key);
+        if (urlValue) {
+            return isNaN(urlValue) ? defaultValue : Number(urlValue);
+        }
+
+        // Valor por defecto si no hay nada
+        return defaultValue;
+    };
+    const location = useLocation();
+    const [searchParams] = useSearchParams();
+    const [id, setId] = useState(() => getInitialValue('id', 1));
+    const [deep, setDeep] = useState(1);
     const [treeData, setTreeData] = useState(null); // Datos del árbol
     const [loading, setLoading] = useState(true); // Estado de carga
     const [error, setError] = useState(null); // Manejo de errores
@@ -14,6 +33,8 @@ const KnowledgeTree = () => {
     const [editModalIsOpen, setEditModalIsOpen] = useState(false); // Estado del modal de edición
     const [parentId, setParentId] = useState(null); // ID del padre para el nuevo objeto
     const [selectedNode, setSelectedNode] = useState(null); // Nodo seleccionado para editar
+
+
 
     // Obtener los datos del árbol al cargar el componente
     useEffect(() => {
@@ -116,7 +137,7 @@ const KnowledgeTree = () => {
     const renderTree = (node) => (
         <div key={node.id} className="tree-node">
             <div className="node-content">
-                <span>{node.title}</span>
+                <span>{node.id}</span>
                 <button className="icon-button" onClick={() => openModal(node.id)}>
                     <i className="fas fa-file"></i> {/* Ícono de Font Awesome para "Crear hijo" */}
                 </button>
@@ -126,6 +147,7 @@ const KnowledgeTree = () => {
                 <button className="icon-button" onClick={() => deleteNode(node.id)}>
                     <i className="fas fa-trash"></i> {/* Ícono de Font Awesome para "Editar" */}
                 </button>
+                <span>{node.title}</span>
             </div>
             {node.children.length > 0 && (
                 <div className="children">
@@ -141,7 +163,7 @@ const KnowledgeTree = () => {
     const handleSubmitParam = (e) => {
         e.preventDefault();
         fetchTreeData(); // Obtener los datos del árbol con los valores ingresados
-      };
+    };
 
     return (
         <div className="knowledge-tree">

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { API_URL, modalStyles } from './constants';
 import Modal from 'react-modal';
+import { Link } from 'react-router-dom';
 
 const KnowledgeSearch = () => {
     const nullNode = {
@@ -85,17 +86,22 @@ const KnowledgeSearch = () => {
                     <tr className="bg-gray-100">
                         <th className="border border-gray-300 px-4 py-2 text-left"></th>
                         <th className="border border-gray-300 px-4 py-2 text-left"></th>
+                        <th className="border border-gray-300 px-4 py-2 text-left"></th>
                     </tr>
                 </thead>
                 <tbody>
                     {results.map((result) => (
                         <tr key={result.id} className="border-t border-gray-300">
-                            <td className="border border-gray-300 px-4 py-2">{result.title}</td>
                             <td className="border border-gray-300 px-4 py-2">
                                 <button className="icon-button" onClick={() => openEditModal(result)}>
                                     <i className="fas fa-file"></i> {/* Ícono de Font Awesome para "Crear hijo" */}
                                 </button>
                             </td>
+                            <Link to={`/knowledge-tree?id=${result.id}`}>
+                                Árbol de temas
+                            </Link>
+                            <td className="border border-gray-300 px-4 py-2">{result.title}</td>
+
                         </tr>
                     ))}
                 </tbody>
