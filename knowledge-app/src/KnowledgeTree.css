@@ -1,0 +1,113 @@
+.knowledge-tree {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+  }
+  
+  .tree-node {
+    margin-left: 20px;
+    padding: 10px;
+    border-left: 2px solid #ccc;
+  }
+  
+  .node-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .children {
+    margin-left: 20px;
+  }
+  
+  .modal {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    max-width: 500px;
+    margin: 0 auto;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  
+  .overlay {
+    background: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  button {
+    margin: 0 5px;
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+
+  /* Estilos para los botones con íconos */
+.icon-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    margin: 0 5px;
+    font-size: 14px; /* Tamaño del ícono */
+    color: #007bff; /* Color del ícono */
+    transition: color 0.3s ease;
+  }
+  
+  .icon-button:hover {
+    color: #0056b3; /* Color del ícono al pasar el mouse */
+  }
+  
+  /* Ajustes adicionales para el árbol */
+  .tree-node {
+    margin-left: 20px;
+    padding: 10px;
+    border-left: 2px solid #ccc;
+  }
+  
+  .node-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .children {
+    margin-left: 20px;
+  }
+
+  /* Estilos para las modales */
+.modal {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    max-width: 600px; /* Hacer la modal más ancha */
+    width: 90%; /* Ajustar el ancho */
+    margin: 0 auto;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    max-height: 80vh; /* Limitar la altura */
+    overflow-y: auto; /* Agregar scroll si el contenido es muy largo */
+  }
+  
+  /* Estilos para el textarea */
+  textarea {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    resize: vertical; /* Permitir redimensionar verticalmente */
+    min-height: 100px; /* Altura mínima */
+  }
