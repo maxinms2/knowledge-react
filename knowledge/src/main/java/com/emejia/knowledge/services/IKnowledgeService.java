@@ -17,6 +17,8 @@ public interface IKnowledgeService {
 	
 //	Optional<Knowledge> getKnowledge(Long id);
 	
+	void delete(Long rootId);
+	
 	KnowledgeDTO getKnowledge(PositionTree positionTree);
 	
 	Knowledge nullObject();

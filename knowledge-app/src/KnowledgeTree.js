@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
 import './KnowledgeTree.css';
+import { API_URL} from './constants';
 
 const KnowledgeTree = () => {
+  
   const [treeData, setTreeData] = useState(null); // Datos del árbol
   const [loading, setLoading] = useState(true); // Estado de carga
   const [error, setError] = useState(null); // Manejo de errores
@@ -17,10 +19,11 @@ const KnowledgeTree = () => {
     fetchTreeData();
   }, []);
 
+
   // Función para obtener los datos del árbol
   const fetchTreeData = async () => {
     try {
-      const response = await axios.post('http://localhost:8080/api/knowledge/children', {
+      const response = await axios.post(API_URL + '/api/knowledge/children', {
         deep: 6,
         id: 1
       });
@@ -46,12 +49,24 @@ const KnowledgeTree = () => {
   // Función para abrir el modal de edición y obtener la información del nodo
   const openEditModal = async (id) => {
     try {
-      const response = await axios.post('http://localhost:8080/api/knowledge/children', {
+      
+      const response = await axios.post(API_URL+'/api/knowledge/children', {
         deep: 1,
         id: id
       });
+     // console.log("node===="+response.data);
       setSelectedNode(response.data); // Guardar la información del nodo
       setEditModalIsOpen(true); // Abrir el modal de edición
+    } catch (err) {
+      setError(err.message); // Manejar errores
+    }
+  };
+
+  const deleteNode=async (id) => {
+    try {
+      
+        const response = await axios.delete(`${API_URL}/api/knowledge/${id}`); 
+        await fetchTreeData();
     } catch (err) {
       setError(err.message); // Manejar errores
     }
@@ -67,14 +82,13 @@ const KnowledgeTree = () => {
   const handleCreate = async (formData) => {
     try {
       // Crear el nuevo nodo
-      await axios.post('http://localhost:8080/api/knowledge', {
+      await axios.post(API_URL+'/api/knowledge', {
         ...formData,
         parentId: parentId // Usar el parentId del nodo seleccionado
       });
 
       // Volver a obtener los datos del árbol
       await fetchTreeData();
-
       closeModal(); // Cerrar el modal de creación
     } catch (err) {
       setError(err.message); // Manejar errores
@@ -85,7 +99,7 @@ const KnowledgeTree = () => {
   const handleEdit = async (formData) => {
     try {
       // Editar el nodo
-      await axios.put(`http://localhost:8080/api/knowledge/${selectedNode.id}`, formData);
+      await axios.put(API_URL+`/api/knowledge/${selectedNode.id}`, formData);
 
       // Volver a obtener los datos del árbol
       await fetchTreeData();
@@ -102,10 +116,13 @@ const KnowledgeTree = () => {
       <div className="node-content">
         <span>{node.title}</span>
         <button className="icon-button" onClick={() => openModal(node.id)}>
-          <i className="fas fa-plus"></i> {/* Ícono de Font Awesome para "Crear hijo" */}
+          <i className="fas fa-file"></i> {/* Ícono de Font Awesome para "Crear hijo" */}
         </button>
         <button className="icon-button" onClick={() => openEditModal(node.id)}>
           <i className="fas fa-edit"></i> {/* Ícono de Font Awesome para "Editar" */}
+        </button>
+        <button className="icon-button" onClick={() => deleteNode(node.id)}>
+          <i className="fas fa-trash"></i> {/* Ícono de Font Awesome para "Editar" */}
         </button>
       </div>
       {node.children.length > 0 && (
@@ -157,6 +174,10 @@ const CreateModal = ({ isOpen, onRequestClose, onSubmit }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit(formData);
+    formData.content='';
+    formData.title='';
+    formData.createdAt='';
+    formData.updatedAt=''; 
   };
 
   return (

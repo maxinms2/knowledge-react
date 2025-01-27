@@ -5,7 +5,7 @@ import './App.css';
 function App() {
   return (
     <div className="App">
-      <h1>Árbol de Knowledge</h1>
+      <h1>Base de conocimiento</h1>
       <KnowledgeTree />
     </div>
   );
