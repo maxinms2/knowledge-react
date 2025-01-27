@@ -67,7 +67,10 @@ public class KnowledgeServiceImpl implements IKnowledgeService {
 	@Transactional(readOnly = true)
 	public KnowledgeDTO getKnowledge(PositionTree positionTree) {
 		Optional<Knowledge> knowledge = repository.findById(positionTree.getId());
-		KnowledgeDTO dto = getKnowledge(positionTree, entityToDTO(knowledge.get()));
+		KnowledgeDTO dto=null;
+		if (knowledge.isPresent()) {
+			dto = getKnowledge(positionTree, entityToDTO(knowledge.get()));
+		}
 		return dto;
 	}
 
@@ -103,8 +106,9 @@ public class KnowledgeServiceImpl implements IKnowledgeService {
 
 	@Override
 	public List<KnowledgeDTO> findByText(String text) {
-		List<Knowledge> knowledges=repository.findByText(text);
-		List<KnowledgeDTO> knowledgesDTO=knowledges.stream().map(k->mapper.entityToDTO(k)).collect(Collectors.toList());
+		List<Knowledge> knowledges = repository.findByText(text);
+		List<KnowledgeDTO> knowledgesDTO = knowledges.stream().map(k -> mapper.entityToDTO(k))
+				.collect(Collectors.toList());
 		return knowledgesDTO;
 	}
 
