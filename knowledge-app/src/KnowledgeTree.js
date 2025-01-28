@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import Modal from 'react-modal';
 import './KnowledgeTree.css';
-import { API_URL, modalStyles } from './constants';
 import { useLocation, useSearchParams } from 'react-router-dom';
+import { postApi, deleteApi } from './services/api';
+import EditModal from './modales/EditModal';
+import CreateModal from './modales/CreateModal';
+import { messageError, confirmMessage } from './services/messages';
 import Swal from "sweetalert2";
 
 const KnowledgeTree = () => {
@@ -48,11 +49,11 @@ const KnowledgeTree = () => {
         }
     }, [id, deep]); // Escucha cambios en `id` o `deep`
     const updateTree = (id) => {
-        
-        if(id<1){
-            id=1;
+
+        if (id < 1) {
+            id = 1;
         }
-        console.log('id: '+id)
+        console.log('id: ' + id)
         setDeep(1);
         setId(id);
     }
@@ -61,19 +62,14 @@ const KnowledgeTree = () => {
     // Función para obtener los datos del árbol
     const fetchTreeData = async () => {
         try {
-
-            const response = await axios.post(API_URL + '/api/knowledge/children', {
+            const data = await postApi('/api/knowledge/children', {
                 deep: deep,
                 id: id
             });
-            setTreeData(response.data);
+            await setTreeData(data);
         } catch (err) {
-            Swal.fire({
-                title: "Error inesperado",
-                text: "Por favor, intente más tarde",
-                icon: "error",
-                confirmButtonText: "Aceptar"
-            });
+            messageError("Error inesperado", "Por favor, intente más tarde");
+
         } finally {
             setLoading(false);
         }
@@ -93,56 +89,43 @@ const KnowledgeTree = () => {
     // Función para abrir el modal de edición y obtener la información del nodo
     const openEditModal = async (id) => {
         try {
-
-            const response = await axios.post(API_URL + '/api/knowledge/children', {
+            const data = await postApi('/api/knowledge/children', {
                 deep: 1,
                 id: id
             });
             // console.log("node===="+response.data);
-            setSelectedNode(response.data); // Guardar la información del nodo
+            setSelectedNode(data); // Guardar la información del nodo
             setEditModalIsOpen(true); // Abrir el modal de edición
         } catch (err) {
-            Swal.fire({
-                title: "Error inesperado",
-                text: "Por favor, intente más tarde",
-                icon: "error",
-                confirmButtonText: "Aceptar"
-            });
+            messageError("Error inesperado", "Por favor, intente más tarde");
+
         }
     };
-
-
 
     const deleteNodeAsync = async (id) => {
         try {
-            const response = await axios.delete(`${API_URL}/api/knowledge/${id}`);
-
+            await deleteApi(`/api/knowledge/${id}`);
             await fetchTreeData();
         } catch (err) {
-            Swal.fire({
-                title: "Error inesperado",
-                text: "Por favor, intente más tarde",
-                icon: "error",
-                confirmButtonText: "Aceptar"
-            });
+            messageError("Error inesperado", "Por favor, intente más tarde");
         }
     };
 
-    const deleteNode = (id) => {
+    const deleteNode = async (id) => {
         console.log(id);
-        Swal.fire({
-            title: "¿Estás seguro?",
-            text: "No podrás revertir esta acción. Se borrarán todos los hijos.",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Continuar",
-            cancelButtonText: "Cancelar",
-        }).then((result) => {
-            if (result.isConfirmed) {
-                console.log('id: '+id);
-                deleteNodeAsync(id);
-            } 
-        });
+            Swal.fire({
+                title: "¿Estás seguro?",
+                text: "No podrás revertir esta acción. Se borrarán todos los hijos.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Continuar",
+                cancelButtonText: "Cancelar",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    console.log('id: '+id);
+                    deleteNodeAsync(id);
+                } 
+            });
     };
 
     // Función para cerrar el modal de edición
@@ -155,7 +138,7 @@ const KnowledgeTree = () => {
     const handleCreate = async (formData) => {
         try {
             // Crear el nuevo nodo
-            await axios.post(API_URL + '/api/knowledge', {
+            const data = await postApi('/api/knowledge', {
                 ...formData,
                 parentId: parentId // Usar el parentId del nodo seleccionado
             });
@@ -166,19 +149,9 @@ const KnowledgeTree = () => {
             closeEditModal();
         } catch (err) {
             if (err.response && err.response.status === 409) {
-                Swal.fire({
-                    title: "Error",
-                    text: err.response.data.error, // Mensaje del servidor
-                    icon: "error",
-                    confirmButtonText: "Aceptar"
-                });
+                messageError("Error", err.response.data.error);
             } else {
-                Swal.fire({
-                    title: "Error inesperado",
-                    text: "Por favor, intente más tarde",
-                    icon: "error",
-                    confirmButtonText: "Aceptar"
-                });
+                messageError("Error inesperado", "Por favor, intente más tarde");
             }
         }
     };
@@ -254,143 +227,4 @@ const KnowledgeTree = () => {
         </div>
     );
 };
-
-// Componente para el modal de creación
-const CreateModal = ({ isOpen, onRequestClose, onSubmit }) => {
-    const [formData, setFormData] = useState({
-        title: '',
-        content: '',
-        createdAt: '',
-        updatedAt: ''
-    });
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value
-        });
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        onSubmit(formData);
-        
-        formData.content = '';
-        formData.title = '';
-        formData.createdAt = '';
-        formData.updatedAt = '';
-    };
-
-    return (
-        <Modal
-            style={modalStyles}
-            isOpen={isOpen}
-            onRequestClose={onRequestClose}
-            contentLabel="Crear nuevo tema"
-            className="modal"
-            overlayClassName="overlay"
-        >
-            <h2>Crear nuevo tema</h2>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Título:</label>
-                    <input
-                        type="text"
-                        name="title"
-                        value={formData.title}
-                        onChange={handleInputChange}
-                        required
-                    />
-                </div>
-                <div>
-                    <label>Contenido:</label>
-                    <textarea
-                        name="content"
-                        value={formData.content}
-                        onChange={handleInputChange}
-                        required
-                    />
-                </div>
-
-                <button type="submit">Crear</button>
-                <button type="button" onClick={onRequestClose}>Cancelar</button>
-            </form>
-        </Modal>
-    );
-};
-
-// Componente para el modal de edición
-const EditModal = ({ isOpen, onRequestClose, node, onSubmit }) => {
-    const [formData, setFormData] = useState({
-        title: node ? node.title : '',
-        content: node ? node.content : '',
-        createdAt: node ? node.createdAt : '',
-        updatedAt: node ? node.updatedAt : '',
-        id:node ? node.id : 0
-    });
-
-    useEffect(() => {
-        if (node) {
-            setFormData({
-                id:node.id,
-                title: node.title,
-                content: node.content,
-                createdAt: node.createdAt,
-                updatedAt: node.updatedAt
-            });
-        }
-    }, [node]);
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value
-        });
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        onSubmit(formData);
-    };
-
-    return (
-        <Modal
-            style={modalStyles}
-            isOpen={isOpen}
-            onRequestClose={onRequestClose}
-            contentLabel="Editar tema"
-            className="modal"
-            overlayClassName="overlay"
-        >
-            <h2>Editar tema</h2>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Título:</label>
-                    <input
-                        type="text"
-                        name="title"
-                        value={formData.title}
-                        onChange={handleInputChange}
-                        required
-                    />
-                </div>
-                <div>
-                    <label>Contenido:</label>
-                    <textarea
-                        name="content"
-                        value={formData.content}
-                        onChange={handleInputChange}
-                        required
-                    />
-                </div>
-
-                <button type="submit">Guardar</button>
-                <button type="button" onClick={onRequestClose}>Cancelar</button>
-            </form>
-        </Modal>
-    );
-};
-
 export default KnowledgeTree;
