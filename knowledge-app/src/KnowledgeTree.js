@@ -41,6 +41,21 @@ const KnowledgeTree = () => {
         fetchTreeData();
     }, []);
 
+    useEffect(() => {
+        if (id !== null) {
+            fetchTreeData();
+        }
+    }, [id, deep]); // Escucha cambios en `id` o `deep`
+    const updateTree = (id) => {
+        
+        if(id<1){
+            id=1;
+        }
+        console.log('id: '+id)
+        setDeep(1);
+        setId(id);
+    }
+
 
     // Función para obtener los datos del árbol
     const fetchTreeData = async () => {
@@ -98,7 +113,7 @@ const KnowledgeTree = () => {
     // Función para cerrar el modal de edición
     const closeEditModal = () => {
         setEditModalIsOpen(false);
-        setSelectedNode(null);
+        //setSelectedNode(null);
     };
 
     // Función para manejar la creación de un nuevo objeto
@@ -113,33 +128,21 @@ const KnowledgeTree = () => {
             // Volver a obtener los datos del árbol
             await fetchTreeData();
             closeModal(); // Cerrar el modal de creación
+            closeEditModal();
         } catch (err) {
             setError(err.message); // Manejar errores
         }
     };
 
-    // Función para manejar la edición de un objeto
-    const handleEdit = async (formData) => {
-        try {
-            // Editar el nodo
-            await axios.put(API_URL + `/api/knowledge/${selectedNode.id}`, formData);
-
-            // Volver a obtener los datos del árbol
-            await fetchTreeData();
-
-            closeEditModal(); // Cerrar el modal de edición
-        } catch (err) {
-            setError(err.message); // Manejar errores
-        }
-    };
 
     // Renderizar el árbol de manera recursiva
     const renderTree = (node) => (
         <div key={node.id} className="tree-node">
             <div className="node-content">
                 <span>{node.id}</span>
+
                 <button className="icon-button" onClick={() => openModal(node.id)}>
-                    <i className="fas fa-file"></i> {/* Ícono de Font Awesome para "Crear hijo" */}
+                    <i className="fas fa-save"></i> {/* Ícono de Font Awesome para "Crear hijo" */}
                 </button>
                 <button className="icon-button" onClick={() => openEditModal(node.id)}>
                     <i className="fas fa-edit"></i> {/* Ícono de Font Awesome para "Editar" */}
@@ -147,6 +150,13 @@ const KnowledgeTree = () => {
                 <button className="icon-button" onClick={() => deleteNode(node.id)}>
                     <i className="fas fa-trash"></i> {/* Ícono de Font Awesome para "Editar" */}
                 </button>
+                <button className="icon-button" onClick={() => updateTree(node.parentId)}>
+                    <i className="fas fa-arrow-left"></i> {/* Ícono de Font Awesome para "Editar" */}
+                </button>
+                <button className="icon-button" onClick={() => updateTree(node.id)}>
+                    <i className="fas fa-arrow-right"></i> {/* Ícono de Font Awesome para "Editar" */}
+                </button>
+
                 <span>{node.title}</span>
             </div>
             {node.children.length > 0 && (
@@ -160,35 +170,26 @@ const KnowledgeTree = () => {
     if (loading) return <div>Cargando...</div>;
     if (error) return <div>Error: {error}</div>;
 
-    const handleSubmitParam = (e) => {
-        e.preventDefault();
-        fetchTreeData(); // Obtener los datos del árbol con los valores ingresados
-    };
-
     return (
         <div className="knowledge-tree">
-            {/* Formulario para ingresar id y deep */}
-            <form onSubmit={handleSubmitParam} className="tree-form">
-                <div>
-                    <label>ID:</label>
-                    <input
-                        type="number"
-                        value={id}
-                        onChange={(e) => setId(e.target.value)}
-                        required
-                    />
-                </div>
-                <div>
-                    <label>Deep:</label>
-                    <input
-                        type="number"
-                        value={deep}
-                        onChange={(e) => setDeep(e.target.value)}
-                        required
-                    />
-                </div>
-                <button type="submit">Cargar árbol</button>
-            </form>
+            <div>
+                <label>ID:</label>
+                <input
+                    type="number"
+                    value={id}
+                    onChange={(e) => setId(e.target.value)}
+                    required
+                />
+            </div>
+            <div>
+                <label>Deep:</label>
+                <input
+                    type="number"
+                    value={deep}
+                    onChange={(e) => setDeep(e.target.value)}
+                    required
+                />
+            </div>
             {treeData && renderTree(treeData)}
             <CreateModal
                 isOpen={modalIsOpen}
@@ -199,7 +200,7 @@ const KnowledgeTree = () => {
                 isOpen={editModalIsOpen}
                 onRequestClose={closeEditModal}
                 node={selectedNode}
-                onSubmit={handleEdit}
+                onSubmit={handleCreate}
             />
         </div>
     );
@@ -225,6 +226,7 @@ const CreateModal = ({ isOpen, onRequestClose, onSubmit }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
         onSubmit(formData);
+        
         formData.content = '';
         formData.title = '';
         formData.createdAt = '';
@@ -275,12 +277,14 @@ const EditModal = ({ isOpen, onRequestClose, node, onSubmit }) => {
         title: node ? node.title : '',
         content: node ? node.content : '',
         createdAt: node ? node.createdAt : '',
-        updatedAt: node ? node.updatedAt : ''
+        updatedAt: node ? node.updatedAt : '',
+        id:node ? node.id : 0
     });
 
     useEffect(() => {
         if (node) {
             setFormData({
+                id:node.id,
                 title: node.title,
                 content: node.content,
                 createdAt: node.createdAt,

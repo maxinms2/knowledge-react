@@ -1,6 +1,7 @@
 package com.emejia.knowledge.services.impl;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +32,12 @@ public class KnowledgeServiceImpl implements IKnowledgeService {
 
 	@Transactional
 	public KnowledgeDTO createKnowledge(KnowledgeDTO dto) {
-		Knowledge knowledge = new Knowledge();
+		Knowledge knowledge=null;
+		if(dto.getId()==null) {
+			knowledge = new Knowledge();
+		}else {
+			knowledge=repository.findById(dto.getId()).get();
+		}
 		knowledge.setTitle(dto.getTitle());
 		knowledge.setContent(dto.getContent());
 		knowledge.setCreatedAt(new Date());
@@ -47,6 +53,7 @@ public class KnowledgeServiceImpl implements IKnowledgeService {
 	@Transactional(readOnly = true)
 	public List<Knowledge> getTree(Long rootId) {
 		return repository.findByParentId(rootId).stream().filter(k -> k.getParent().getId() != k.getId())
+				.sorted(Comparator.comparing(Knowledge::getTitle))
 				.collect(Collectors.toList());
 	}
 
@@ -108,6 +115,7 @@ public class KnowledgeServiceImpl implements IKnowledgeService {
 	public List<KnowledgeDTO> findByText(String text) {
 		List<Knowledge> knowledges = repository.findByText(text);
 		List<KnowledgeDTO> knowledgesDTO = knowledges.stream().map(k -> mapper.entityToDTO(k))
+				.sorted(Comparator.comparing(KnowledgeDTO::getTitle)) 
 				.collect(Collectors.toList());
 		return knowledgesDTO;
 	}
