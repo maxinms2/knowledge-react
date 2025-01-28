@@ -17,5 +17,8 @@ public interface KnowledgeRepository extends JpaRepository<Knowledge, Long> {
     + " LIKE LOWER(CONCAT('%', :text, '%')) OR LOWER(k.content) LIKE LOWER(CONCAT('%', :text, '%'))")
     List<Knowledge>  findByText(String text);
     
+    @Query("select k FROM Knowledge k WHERE LOWER(k.title) = LOWER(:title)")
+    Knowledge  findByTitle(String title);
+    
     
 }

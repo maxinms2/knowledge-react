@@ -68,7 +68,12 @@ const KnowledgeTree = () => {
             });
             setTreeData(response.data);
         } catch (err) {
-            setError(err.message);
+            Swal.fire({
+                title: "Error inesperado",
+                text: "Por favor, intente más tarde",
+                icon: "error",
+                confirmButtonText: "Aceptar"
+            });
         } finally {
             setLoading(false);
         }
@@ -97,7 +102,12 @@ const KnowledgeTree = () => {
             setSelectedNode(response.data); // Guardar la información del nodo
             setEditModalIsOpen(true); // Abrir el modal de edición
         } catch (err) {
-            setError(err.message); // Manejar errores
+            Swal.fire({
+                title: "Error inesperado",
+                text: "Por favor, intente más tarde",
+                icon: "error",
+                confirmButtonText: "Aceptar"
+            });
         }
     };
 
@@ -109,7 +119,12 @@ const KnowledgeTree = () => {
 
             await fetchTreeData();
         } catch (err) {
-            setError(err.message); // Manejar errores
+            Swal.fire({
+                title: "Error inesperado",
+                text: "Por favor, intente más tarde",
+                icon: "error",
+                confirmButtonText: "Aceptar"
+            });
         }
     };
 
@@ -150,7 +165,21 @@ const KnowledgeTree = () => {
             closeModal(); // Cerrar el modal de creación
             closeEditModal();
         } catch (err) {
-            setError(err.message); // Manejar errores
+            if (err.response && err.response.status === 409) {
+                Swal.fire({
+                    title: "Error",
+                    text: err.response.data.error, // Mensaje del servidor
+                    icon: "error",
+                    confirmButtonText: "Aceptar"
+                });
+            } else {
+                Swal.fire({
+                    title: "Error inesperado",
+                    text: "Por favor, intente más tarde",
+                    icon: "error",
+                    confirmButtonText: "Aceptar"
+                });
+            }
         }
     };
 
@@ -258,11 +287,11 @@ const CreateModal = ({ isOpen, onRequestClose, onSubmit }) => {
             style={modalStyles}
             isOpen={isOpen}
             onRequestClose={onRequestClose}
-            contentLabel="Crear nuevo objeto"
+            contentLabel="Crear nuevo tema"
             className="modal"
             overlayClassName="overlay"
         >
-            <h2>Crear nuevo objeto</h2>
+            <h2>Crear nuevo tema</h2>
             <form onSubmit={handleSubmit}>
                 <div>
                     <label>Título:</label>
@@ -331,11 +360,11 @@ const EditModal = ({ isOpen, onRequestClose, node, onSubmit }) => {
             style={modalStyles}
             isOpen={isOpen}
             onRequestClose={onRequestClose}
-            contentLabel="Editar nodo"
+            contentLabel="Editar tema"
             className="modal"
             overlayClassName="overlay"
         >
-            <h2>Editar nodo</h2>
+            <h2>Editar tema</h2>
             <form onSubmit={handleSubmit}>
                 <div>
                     <label>Título:</label>

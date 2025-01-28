@@ -10,12 +10,14 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.emejia.knowledge.Exceptions.KnowledgeException;
 import com.emejia.knowledge.mappers.KnowledgeMapper;
 import com.emejia.knowledge.model.dtos.KnowledgeDTO;
 import com.emejia.knowledge.model.utils.PositionTree;
 import com.emejia.knowledge.persistence.entities.Knowledge;
 import com.emejia.knowledge.persistence.repositories.KnowledgeRepository;
 import com.emejia.knowledge.services.IKnowledgeService;
+import com.emejia.knowledge.utils.Constants;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -31,8 +33,13 @@ public class KnowledgeServiceImpl implements IKnowledgeService {
 	}
 
 	@Transactional
-	public KnowledgeDTO createKnowledge(KnowledgeDTO dto) {
-		Knowledge knowledge=null;
+	public KnowledgeDTO createKnowledge(KnowledgeDTO dto) throws KnowledgeException {
+		
+		Knowledge knowledge=repository.findByTitle(dto.getTitle());
+		if(knowledge!=null) {
+			throw new KnowledgeException("Ya existe este tema registrado",Constants.ERR_EXIST_KNOWLEDGE);
+		}
+		
 		if(dto.getId()==null) {
 			knowledge = new Knowledge();
 		}else {
@@ -47,14 +54,16 @@ public class KnowledgeServiceImpl implements IKnowledgeService {
 					.orElseThrow(() -> new EntityNotFoundException("Parent not found"));
 			knowledge.setParent(parent);
 		}
+		
 		return mapper.entityToDTO(repository.save(knowledge));
 	}
 
 	@Transactional(readOnly = true)
 	public List<Knowledge> getTree(Long rootId) {
-		return repository.findByParentId(rootId).stream().filter(k -> k.getParent().getId() != k.getId())
-				.sorted(Comparator.comparing(Knowledge::getTitle))
-				.collect(Collectors.toList());
+		return repository.findByParentId(rootId).stream()
+			    .filter(k -> k.getParent().getId() != k.getId())
+			    .sorted(Comparator.comparing(k -> k.getTitle().toLowerCase()))
+			    .collect(Collectors.toList());
 	}
 
 	@Override
@@ -115,7 +124,7 @@ public class KnowledgeServiceImpl implements IKnowledgeService {
 	public List<KnowledgeDTO> findByText(String text) {
 		List<Knowledge> knowledges = repository.findByText(text);
 		List<KnowledgeDTO> knowledgesDTO = knowledges.stream().map(k -> mapper.entityToDTO(k))
-				.sorted(Comparator.comparing(KnowledgeDTO::getTitle)) 
+				.sorted(Comparator.comparing((k -> k.getTitle().toLowerCase()))) 
 				.collect(Collectors.toList());
 		return knowledgesDTO;
 	}
