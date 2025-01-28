@@ -4,6 +4,7 @@ import Modal from 'react-modal';
 import './KnowledgeTree.css';
 import { API_URL, modalStyles } from './constants';
 import { useLocation, useSearchParams } from 'react-router-dom';
+import Swal from "sweetalert2";
 
 const KnowledgeTree = () => {
     // Función para obtener valores iniciales
@@ -100,7 +101,9 @@ const KnowledgeTree = () => {
         }
     };
 
-    const deleteNode = async (id) => {
+
+
+    const deleteNodeAsync = async (id) => {
         try {
             const response = await axios.delete(`${API_URL}/api/knowledge/${id}`);
 
@@ -108,6 +111,23 @@ const KnowledgeTree = () => {
         } catch (err) {
             setError(err.message); // Manejar errores
         }
+    };
+
+    const deleteNode = (id) => {
+        console.log(id);
+        Swal.fire({
+            title: "¿Estás seguro?",
+            text: "No podrás revertir esta acción. Se borrarán todos los hijos.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Continuar",
+            cancelButtonText: "Cancelar",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                console.log('id: '+id);
+                deleteNodeAsync(id);
+            } 
+        });
     };
 
     // Función para cerrar el modal de edición
