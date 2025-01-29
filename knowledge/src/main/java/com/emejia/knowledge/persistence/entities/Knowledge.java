@@ -113,4 +113,8 @@ public class Knowledge {
 		this.updatedAt = updatedAt;
 	}
 
+	@Override
+	public String toString() {
+		return "[id=" + id + ", title=" + title + ", parentId=" + parent.getId() + "]";
+	}
 }

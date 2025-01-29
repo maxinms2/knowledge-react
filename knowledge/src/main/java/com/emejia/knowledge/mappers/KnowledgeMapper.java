@@ -1,6 +1,7 @@
 package com.emejia.knowledge.mappers;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.springframework.stereotype.Component;
 
@@ -21,6 +22,15 @@ public class KnowledgeMapper {
 		dto.setCreatedAt(db.getCreatedAt());
 		dto.setUpdatedAt(db.getUpdatedAt());
 		return dto;
+	}
+	
+	public Knowledge dtoToEntity(KnowledgeDTO dto) {
+		Knowledge db=new Knowledge();
+		db.setContent(dto.getContent());
+		db.setTitle(dto.getTitle());
+		db.setCreatedAt(new Date());
+		db.setUpdatedAt(new Date());
+		return db;
 	}
 
 	

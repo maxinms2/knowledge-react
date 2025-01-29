@@ -53,5 +53,11 @@ public class KnowledgeDTO {
 	public void setUpdatedAt(Date updatedAt) {
 		this.updatedAt = updatedAt;
 	}
+	@Override
+	public String toString() {
+		return "[id=" + id + ", title=" + title + ", parentId=" + parentId + "]";
+	}
+	
+	
 	
 }

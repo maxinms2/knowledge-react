@@ -66,4 +66,11 @@ public class KnowledgeController {
 		List<KnowledgeDTO> knowledges= service.findByText(dto.getContent());
 		return ResponseEntity.ok(knowledges);
 	}
+	
+	@PostMapping("/restore")
+	public ResponseEntity<String> restore(@RequestBody List<KnowledgeDTO> respaldo) {
+		return ResponseEntity.ok("Guardados "+service.restore(respaldo) + "de"+ respaldo.size());
+	}
+	
+	
 }

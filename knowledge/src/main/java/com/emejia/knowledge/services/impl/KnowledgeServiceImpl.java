@@ -3,7 +3,9 @@ package com.emejia.knowledge.services.impl;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -34,16 +36,16 @@ public class KnowledgeServiceImpl implements IKnowledgeService {
 
 	@Transactional
 	public KnowledgeDTO createKnowledge(KnowledgeDTO dto) throws KnowledgeException {
-		
-		Knowledge knowledge=repository.findByTitle(dto.getTitle());
-		if(knowledge!=null) {
-			throw new KnowledgeException("Ya existe este tema registrado",Constants.ERR_EXIST_KNOWLEDGE);
+
+		Knowledge knowledge = repository.findByTitle(dto.getTitle());
+		if (knowledge != null) {
+			throw new KnowledgeException("Ya existe este tema registrado", Constants.ERR_EXIST_KNOWLEDGE);
 		}
-		
-		if(dto.getId()==null) {
+
+		if (dto.getId() == null) {
 			knowledge = new Knowledge();
-		}else {
-			knowledge=repository.findById(dto.getId()).get();
+		} else {
+			knowledge = repository.findById(dto.getId()).get();
 		}
 		knowledge.setTitle(dto.getTitle());
 		knowledge.setContent(dto.getContent());
@@ -54,16 +56,14 @@ public class KnowledgeServiceImpl implements IKnowledgeService {
 					.orElseThrow(() -> new EntityNotFoundException("Parent not found"));
 			knowledge.setParent(parent);
 		}
-		
+
 		return mapper.entityToDTO(repository.save(knowledge));
 	}
 
 	@Transactional(readOnly = true)
 	public List<Knowledge> getTree(Long rootId) {
-		return repository.findByParentId(rootId).stream()
-			    .filter(k -> k.getParent().getId() != k.getId())
-			    .sorted(Comparator.comparing(k -> k.getTitle().toLowerCase()))
-			    .collect(Collectors.toList());
+		return repository.findByParentId(rootId).stream().filter(k -> k.getParent().getId() != k.getId())
+				.sorted(Comparator.comparing(k -> k.getTitle().toLowerCase())).collect(Collectors.toList());
 	}
 
 	@Override
@@ -83,7 +83,7 @@ public class KnowledgeServiceImpl implements IKnowledgeService {
 	@Transactional(readOnly = true)
 	public KnowledgeDTO getKnowledge(PositionTree positionTree) {
 		Optional<Knowledge> knowledge = repository.findById(positionTree.getId());
-		KnowledgeDTO dto=null;
+		KnowledgeDTO dto = null;
 		if (knowledge.isPresent()) {
 			dto = getKnowledge(positionTree, entityToDTO(knowledge.get()));
 		}
@@ -113,6 +113,7 @@ public class KnowledgeServiceImpl implements IKnowledgeService {
 	}
 
 	@Override
+	@Transactional
 	public void delete(Long rootId) {
 		if (rootId > 1) {
 			repository.deleteById(rootId);
@@ -121,12 +122,36 @@ public class KnowledgeServiceImpl implements IKnowledgeService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<KnowledgeDTO> findByText(String text) {
 		List<Knowledge> knowledges = repository.findByText(text);
 		List<KnowledgeDTO> knowledgesDTO = knowledges.stream().map(k -> mapper.entityToDTO(k))
-				.sorted(Comparator.comparing((k -> k.getTitle().toLowerCase()))) 
-				.collect(Collectors.toList());
+				.sorted(Comparator.comparing((k -> k.getTitle().toLowerCase()))).collect(Collectors.toList());
 		return knowledgesDTO;
+	}
+
+	@Override
+	@Transactional
+	public Long restore(List<KnowledgeDTO> respaldo) {
+
+		respaldo = respaldo.stream().sorted(Comparator.comparing(KnowledgeDTO::getId)).collect(Collectors.toList());
+		List<KnowledgeDTO> respParents = new ArrayList(respaldo);
+		Map<String, String> parents = new HashMap<>();
+
+		respaldo.forEach(k -> {
+			parents.put(k.getTitle(),
+					respParents.stream().filter(p -> p.getId().equals(k.getParentId())).findFirst().get().getTitle());
+			if (k.getId() > 1) {
+				Knowledge knowledge=mapper.dtoToEntity(k);
+				repository.save(knowledge);
+			}
+		});
+
+		parents.entrySet().stream().forEach(entry -> {
+			Knowledge knowledge = repository.findByTitle(entry.getKey());
+			knowledge.setParent(repository.findByTitle(entry.getValue()));
+		});
+		return repository.count();
 	}
 
 }

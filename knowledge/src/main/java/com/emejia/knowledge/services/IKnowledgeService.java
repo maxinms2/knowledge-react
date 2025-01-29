@@ -22,5 +22,7 @@ public interface IKnowledgeService {
 	
 	Knowledge nullObject();
 	
+	Long restore(List<KnowledgeDTO> respaldo);
+	
 	List<KnowledgeDTO>  findByText(String text);
 }
