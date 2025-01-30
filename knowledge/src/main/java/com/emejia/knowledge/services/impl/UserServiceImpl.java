@@ -1,72 +1,91 @@
 package com.emejia.knowledge.services.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.emejia.knowledge.Exceptions.KnowledgeException;
+import com.emejia.knowledge.mappers.DtoMapperUser;
+import com.emejia.knowledge.model.dtos.UserDto;
+import com.emejia.knowledge.model.dtos.UserRequest;
+import com.emejia.knowledge.persistence.entities.Role;
 import com.emejia.knowledge.persistence.entities.User;
+import com.emejia.knowledge.persistence.repositories.RoleRepository;
 import com.emejia.knowledge.persistence.repositories.UserRepository;
-import com.emejia.knowledge.services.IUserService;
-import com.emejia.knowledge.utils.Constants;
+import com.emejia.knowledge.services.UserService;
 
 
 @Service
-public class UserServiceImpl implements IUserService {
+public class UserServiceImpl implements UserService {
 
-	private final UserRepository repository;
-	
+    @Autowired
+    private UserRepository repository;
+
+    @Autowired
+    private RoleRepository roleRepository;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-	public UserServiceImpl(UserRepository repository) {
+    @Override
+    @Transactional(readOnly = true)
+    public List<UserDto> findAll() {
+        List<User> users = (List<User>) repository.findAll();
+        return users
+                .stream()
+                .map(u -> DtoMapperUser.builder().setUser(u).build())
+                .collect(Collectors.toList());
+    }
 
-		this.repository = repository;
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<UserDto> findById(Long id) {
+        return repository.findById(id).map(u -> DtoMapperUser
+                .builder()
+                .setUser(u)
+                .build());
 
-	@Override
-	@Transactional
-	public User save(User user) throws KnowledgeException {
+    }
 
-//		User db = repository.findByEmail(user.getEmail()).orElse(null);
-//		if (db != null) {
-//			throw new KnowledgeException("Ya existe este correo registrado", Constants.ERR_EXIST_MAIL);
-//		}
-		user.setPassword(passwordEncoder.encode(user.getPassword()));
-		return repository.save(user);
-	}
+    @Override
+    @Transactional
+    public UserDto save(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-	@Override
-	public User findUser(String email) throws KnowledgeException {
+        Optional<Role> o = roleRepository.findByName("ROLE_USER");
 
-		Optional<User> user = repository.findByEmail(email);
+        List<Role> roles = new ArrayList<>();
+        if (o.isPresent()) {
+            roles.add(o.orElseThrow());
+        }
+        user.setRoles(roles);
 
-		if (user.isEmpty()) {
-			throw new KnowledgeException("No existe usuario", Constants.ERR_NO_EXIST_USER);
-		}
-		user.get().setPassword("");
-		return user.get();
-	}
+        return DtoMapperUser.builder().setUser(repository.save(user)).build();
+    }
 
-	@Override
-	public void deleteUser(User user) {
-		Optional<User> userDB = repository.findByEmail(user.getEmail());
-		if (userDB.isPresent()) {
-			repository.delete(userDB.get());
-		}
+    @Override
+    @Transactional
+    public Optional<UserDto> update(UserRequest user, Long id) {
+        Optional<User> o = repository.findById(id);
+        User userOptional = null;
+        if (o.isPresent()) {
+            User userDb = o.orElseThrow();
+            userDb.setUsername(user.getUsername());
+            userDb.setEmail(user.getEmail());
+            userOptional = repository.save(userDb);
+        }
+        return Optional.ofNullable(DtoMapperUser.builder().setUser(userOptional).build());
+    }
 
-	}
-
-	@Override
-	public List<User> findAll() {
-
-		return repository.findAll();
-	}
-	
-	
+    @Override
+    @Transactional
+    public void remove(Long id) {
+        repository.deleteById(id);
+    }
 
 }
