@@ -15,6 +15,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+
+
 import com.emejia.knowledge.model.utils.UserType;
 
 @Entity
@@ -26,8 +29,19 @@ public class User {
     private Integer id;
     private String username;
     @Column(unique = true)
+//    @Email(message = "Formato de correo erroneo")
+//    @NotEmpty(message = "El email es obligatorio")
     private String email;
+    
+//    @Size(min = 8, message = "La contraseña debe tener al menos 8 caracteres")
+//    @NotEmpty(message = "La contraseña es obligatoria")
     private String password;
+    
+//    @Size(min = 8, message = "La contraseña debe tener al menos 8 caracteres")
+//    @NotEmpty(message = "La contraseña es obligatoria")
+    @Transient
+    private String password2;
+    
     @Enumerated(EnumType.STRING)
     private UserType userType;
     @CreationTimestamp
@@ -76,4 +90,12 @@ public class User {
 	public void setDateUpdated(LocalDateTime dateUpdated) {
 		this.dateUpdated = dateUpdated;
 	}
+	public String getPassword2() {
+		return password2;
+	}
+	public void setPassword2(String password2) {
+		this.password2 = password2;
+	}
+	
+	
 }
