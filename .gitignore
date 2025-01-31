@@ -6,3 +6,6 @@ knowledge-app/build
 knowledge/target
 knowledge/*.log
 
+# Ignorar node_modules y build para el proyecto React
+users-app/users-app/node_modules
+users-app/users-app/build
