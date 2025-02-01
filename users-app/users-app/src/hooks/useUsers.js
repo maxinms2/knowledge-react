@@ -1,15 +1,10 @@
 import { useReducer, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { usersReducer } from "../reducers/usersReducer";
+import { findAll, remove, save, update } from "../services/userService";
 
-const initialUsers = [
-    {
-        id: 1,
-        username: 'pepe',
-        password: '12345',
-        email: 'pepe@correo.com'
-    },
-];
+const initialUsers = [];
 
 const initialUserForm = {
     id: 0,
@@ -22,12 +17,31 @@ export const useUsers = () => {
     const [users, dispatch] = useReducer(usersReducer, initialUsers);
     const [userSelected, setUserSelected] = useState(initialUserForm);
     const [visibleForm, setVisibleForm] = useState(false);
+    const navigate = useNavigate();
 
-    const handlerAddUser = (user) => {
+    const getUsers = async () => {
+        const result = await findAll();
+        console.log(result);
+        dispatch({
+            type: 'loadingUsers',
+            payload: result.data,
+        });
+    }
+
+    const handlerAddUser = async(user) => {
         // console.log(user);
+
+        let response;
+
+        if (user.id === 0) {
+            response = await save(user);
+        } else {
+            response = await update(user);
+        }
+
         dispatch({
             type: (user.id === 0) ? 'addUser' : 'updateUser',
-            payload: user,
+            payload: response.data,
         });
 
         Swal.fire(
@@ -40,6 +54,7 @@ export const useUsers = () => {
             'success'
         );
         handlerCloseForm();
+        navigate('/users');
     }
 
     const handlerRemoveUser = (id) => {
@@ -55,7 +70,7 @@ export const useUsers = () => {
             confirmButtonText: 'Si, eliminar!'
         }).then((result) => {
             if (result.isConfirmed) {
-
+                remove(id);
                 dispatch({
                     type: 'removeUser',
                     payload: id,
@@ -94,5 +109,6 @@ export const useUsers = () => {
         handlerUserSelectedForm,
         handlerOpenForm,
         handlerCloseForm,
+        getUsers,
     }
 }

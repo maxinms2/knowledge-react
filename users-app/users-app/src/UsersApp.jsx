@@ -1,53 +1,25 @@
-import { useReducer } from 'react';
-import Swal from 'sweetalert2';
+import { useContext } from 'react';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import { AuthContext } from './auth/context/AuthContext';
 import { LoginPage } from './auth/pages/LoginPage';
-import { loginReducer } from './auth/reducers/loginReducer';
-import { Navbar } from './components/layout/Navbar';
-import { UsersPage } from './pages/UsersPage';
+import { UserRoutes } from './routes/UserRoutes';
 
-const initialLogin = JSON.parse(sessionStorage.getItem('login')) || {
-    isAuth: false,
-    user: undefined,
-}
 export const UsersApp = () => {
 
-    const [login, dispach] = useReducer(loginReducer, initialLogin);
-
-    const handlerLogin = ({ username, password }) => {
-        if (username === 'admin' && password === '12345') {
-            const user = { username: 'admin' }
-            dispach({
-                type: 'login',
-                payload: user,
-            });
-            sessionStorage.setItem('login', JSON.stringify({
-                isAuth: true,
-                user,
-            }));
-
-        } else {
-            Swal.fire('Error Login', 'Username o password invalidos', 'error');
-        }
-    }
-
-    const handlerLogout = () => {
-        dispach({
-            type: 'logout',
-        });
-        sessionStorage.removeItem('login');
-    }
+    const { login } = useContext(AuthContext);
     return (
-        <>
+        <Routes>
             {
                 login.isAuth
                     ? (
-                        <>
-                            <Navbar login={ login } handlerLogout={handlerLogout} />
-                            <UsersPage />
-                        </>
+                        <Route path='/*' element={<UserRoutes />} />
                     )
-                    : <LoginPage handlerLogin={handlerLogin} />
+                    : <>
+                        <Route path='/login' element={<LoginPage />} />
+                        <Route path='/*' element={<Navigate to="/login" /> } />
+                    </>
+                    
             }
-        </>
+        </Routes>
     );
 }
