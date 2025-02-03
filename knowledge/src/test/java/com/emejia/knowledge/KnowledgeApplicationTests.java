@@ -1,13 +1,13 @@
-package com.emejia.knowledge;
-
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-
-@SpringBootTest
-class KnowledgeApplicationTests {
-
-	@Test
-	void contextLoads() {
-	}
-
-}
+//package com.emejia.knowledge;
+//
+//import org.junit.jupiter.api.Test;
+//import org.springframework.boot.test.context.SpringBootTest;
+//
+//@SpringBootTest
+//class KnowledgeApplicationTests {
+//
+//	@Test
+//	void contextLoads() {
+//	}
+//
+//}

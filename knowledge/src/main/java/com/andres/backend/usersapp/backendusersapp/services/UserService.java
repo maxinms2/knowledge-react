@@ -22,4 +22,6 @@ public interface UserService {
     Optional<UserDto> update(UserRequest user, Long id);
 
     void remove(Long id);
+
+	void initAdmin();
 }

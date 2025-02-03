@@ -1,0 +1,19 @@
+# Usa una imagen de Node.js ligera
+FROM node:18-alpine
+
+# Establece el directorio de trabajo dentro del contenedor
+WORKDIR /app
+
+# Copia los archivos del proyecto
+COPY . .
+
+# Instala las dependencias
+RUN npm install
+
+# Expone el puerto 5173
+EXPOSE 5173
+
+# Ejecuta el servidor de desarrollo de Vite con el host configurado
+CMD ["npm", "run", "dev", "--", "--host"]
+
+

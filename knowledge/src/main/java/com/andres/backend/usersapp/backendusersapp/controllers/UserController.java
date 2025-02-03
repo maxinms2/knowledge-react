@@ -47,6 +47,11 @@ public class UserController {
         Pageable pageable = PageRequest.of(page, 5);
         return service.findAll(pageable);
     }
+    
+    @GetMapping("/init")
+    public void init() {
+        service.initAdmin();
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> show(@PathVariable Long id) {

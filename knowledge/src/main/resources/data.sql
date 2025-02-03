@@ -67,6 +67,10 @@ CREATE TABLE IF NOT EXISTS public.users_roles
 );
 insert into roles(name) values('ROLE_ADMIN');
 insert into roles(name) values('ROLE_USER');
+insert into users(email, username,password)
+	values('admin@gmail.com','admin','"$2a$10$62UgE8OYdgOGyEDvB5BOuugOp/UjxAT./YtMaHF12Vz6ANX.8DMbu"')
 SELECT * FROM ROLES;
+insert into users_roles values(1,1);
+insert into users_roles values(1,2);
 
 */

@@ -32,10 +32,29 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+    
+    @Override
+    @Transactional
+    public void initAdmin() {
+    	List<User> users0=(List<User>)repository.findAll();
+    	if(users0.isEmpty()) {
+    		User user=new User();
+    		user.setUsername("admin");
+    		user.setEmail("admin@gmail.com");
+    		user.setPassword("admin");
+    		List<Role> roles=new ArrayList<>();
+    		roles.add(roleRepository.findByName("ROLE_ADMIN").get());
+    		roles.add(roleRepository.findByName("ROLE_USER").get());
+    		user.setRoles(roles);
+    		user.setPassword(passwordEncoder.encode(user.getPassword()));
+    		repository.save(user);
+    	}
+    }
 
     @Override
     @Transactional(readOnly = true)
     public List<UserDto> findAll() {
+    	
         List<User> users = (List<User>) repository.findAll();
         return users
                 .stream()
