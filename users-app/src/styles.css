@@ -39,3 +39,9 @@
         opacity: 1
     }
 }
+
+.nav-link.btn-light:hover {
+    background-color: #f8f9fa; /* Un gris muy claro para dar un pequeño realce */
+    border-color: #ced4da; /* Un gris un poco más oscuro en el borde */
+    transition: 0.3s;
+}

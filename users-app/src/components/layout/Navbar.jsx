@@ -7,7 +7,7 @@ export const Navbar = () => {
     return (
         <nav className="navbar navbar-expand-lg bg-body-tertiary">
             <div className="container-fluid">
-                <a className="navbar-brand" href="#">UsersApp</a>
+                <a className="navbar-brand" href="#">Base de conocimiento</a>
                 <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span className="navbar-toggler-icon"></span>
                 </button>
@@ -15,17 +15,35 @@ export const Navbar = () => {
                 <div className="collapse navbar-collapse" id="navbarNav">
                     <ul className="navbar-nav">
                         <li className="nav-item">
-                            <NavLink className="nav-link" to="/users">
+                            <NavLink className="nav-link btn btn-light border rounded-pill px-3 py-1 mx-1" to="/users">
                                 Usuarios
                             </NavLink>
                         </li>
                         {!login.isAdmin ||
                             <li className="nav-item">
-                                <NavLink className="nav-link" to="/users/register">
+                                <NavLink className="nav-link btn btn-light border rounded-pill px-3 py-1 mx-1" to="/users/register">
                                     Registrar Usuario
                                 </NavLink>
                             </li>
                         }
+                    </ul>
+                </div>
+
+
+
+
+                <div className="collapse navbar-collapse" id="navbarNav">
+                    <ul className="navbar-nav">
+                        <li className="nav-item">
+                            <NavLink className="nav-link" to="/know/tree">
+                                Árbol de temas
+                            </NavLink>
+                        </li>
+                        <li className="nav-item">
+                            <NavLink className="nav-link" to="/know/search">
+                                Búsqueda de temas
+                            </NavLink>
+                        </li>
                     </ul>
                 </div>
 

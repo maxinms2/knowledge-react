@@ -30,7 +30,7 @@ export const useAuth = () => {
                 user,
             }));
             sessionStorage.setItem('token', `Bearer ${token}`);
-            navigate('/users');
+            navigate('/know/tree');
         } catch (error) {
             dispatch(onLogout());
             if (error.response?.status == 401) {

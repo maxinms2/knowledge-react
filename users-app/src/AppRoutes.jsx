@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { LoginPage } from './auth/pages/LoginPage';
 import { UserRoutes } from './routes/UserRoutes';
 import { useSelector } from 'react-redux';
+import { KnowledgeRoutes } from './routes/KnowledgeRoutes';
 
 export const AppRoutes = () => {
 
@@ -21,7 +22,10 @@ export const AppRoutes = () => {
             {
                 isAuth
                     ? (
-                        <Route path='/*' element={<UserRoutes />} />
+                        <>
+                            <Route path='/*' element={<UserRoutes />} />
+                            <Route path='/know/*' element={<KnowledgeRoutes />} />
+                        </>
                     )
                     : <>
                         <Route path='/login' element={<LoginPage />} />
