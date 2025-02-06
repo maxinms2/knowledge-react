@@ -2,6 +2,7 @@ import { useState } from "react";
 import { API_URL, modalStyles } from './constants';
 import { find } from '../services/knowledgeService';
 import { EditModalForm } from "./modales/EditModalForm";
+import { Link } from "react-router-dom";
 
 export const KnowledgeSearch = () => {
     const nullNode = {
@@ -106,7 +107,9 @@ export const KnowledgeSearch = () => {
                                         <i className="fas fa-file">Abrir</i> {/* Ícono de Font Awesome para "Crear hijo" */}
                                     </button>
                                 </td>
-                                <td className="px-4 py-2">Árbol de temas</td>
+                                <Link to={`/know/tree?id=${result.id}`}>
+                                    Árbol de temas
+                                </Link>
                                 <td className="px-4 py-2">{result.content}</td>
                             </tr>
                         ))}

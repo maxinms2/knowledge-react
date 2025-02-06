@@ -54,7 +54,10 @@ public class KnowledgeServiceImpl implements IKnowledgeService {
 			Knowledge parent = repository.findById(dto.getParentId())
 					.orElseThrow(() -> new EntityNotFoundException("Parent not found"));
 			knowledge.setParent(parent);
+		}else {
+			throw new KnowledgeException("Debe tener un tema base", Constants.ERR_KNOWLEDGE);
 		}
+		
 
 		return mapper.entityToDTO(repository.save(knowledge));
 	}

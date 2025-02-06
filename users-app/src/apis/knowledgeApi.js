@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const knowledgeApi = axios.create({
-    baseURL: `${import.meta.env.VITE_API_BASE_URL}/knowledge/find`
+    baseURL: `${import.meta.env.VITE_API_BASE_URL}/knowledge`
 });
 
 knowledgeApi.interceptors.request.use(config => {

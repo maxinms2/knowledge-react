@@ -11,9 +11,7 @@ export const EditModalForm = ({onRequestClose,node}) => {
                             </h5>
                         </div>
                         <div className="modal-body">
-                            <h2>TEMA</h2>
                             <div>
-                                <label>Título:</label>
                                 <input
                                     type="text"
                                     name="title"
@@ -21,7 +19,6 @@ export const EditModalForm = ({onRequestClose,node}) => {
                                 />
                             </div>
                             <div>
-                                <label>Contenido:</label>
                                 <textarea
                                     name="content"
                                     value={node.content}
