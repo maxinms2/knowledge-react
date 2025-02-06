@@ -1,0 +1,19 @@
+# Ignorar node_modules en el frontend (React)
+users-app/node_modules/
+
+# Ignorar archivos de build y dependencias del backend (Spring Boot)
+knowledge/target/
+knowledge/.mvn/
+knowledge/.idea/
+knowledge/.vscode/
+knowledge/*.log
+
+# Ignorar archivos de configuración y entorno locales
+.env
+*.iml
+
+# Ignorar archivos generados (como dist de frontend)
+users-app/dist/
+
+# Ignorar directorios de logs
+logs/

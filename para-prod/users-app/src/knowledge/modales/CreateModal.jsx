@@ -1,16 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from "react";
 
-export const EditModal = ({onRequestClose,node,onSubmit}) => {
+export const CreateModal = ({ onRequestClose, onSubmit }) => {
 
     const [formData, setFormData] = useState({
-        title: node ? node.title : '',
-        content: node ? node.content : '',
-        id:node ? node.id : 0
+        title: '',
+        content: ''
     });
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        onSubmit(formData);
-    };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -20,17 +15,13 @@ export const EditModal = ({onRequestClose,node,onSubmit}) => {
         });
     };
 
-    useEffect(() => {
-        if (node) {
-            setFormData({
-                id:node.id,
-                title: node.title,
-                content: node.content,
-                createdAt: node.createdAt,
-                updatedAt: node.updatedAt
-            });
-        }
-    }, [node]);
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onSubmit(formData);
+
+        formData.content = '';
+        formData.title = '';
+    };
 
     return (
         <div className="abrir-modal animacion fadeIn">
@@ -39,7 +30,7 @@ export const EditModal = ({onRequestClose,node,onSubmit}) => {
                     <div className="modal-content">
                         <div className="modal-header">
                             <h5 className="modal-title">
-                                Editar tema
+                            Crear nuevo tema
                             </h5>
                         </div>
                         <div className="modal-body">
@@ -64,7 +55,7 @@ export const EditModal = ({onRequestClose,node,onSubmit}) => {
                                     />
                                 </div>
 
-                                <button type="submit">Guardar</button>
+                                <button type="submit">Crear</button>
                                 <button type="button" onClick={onRequestClose}>Cancelar</button>
                             </form>
                         </div>
