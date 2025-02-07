@@ -158,9 +158,9 @@ export const KnowledgeTree = () => {
         <div key={node.id} className="tree-node">
             <div className="node-content">
                 <span>{node.id}</span>
-                <button className="icon-button" onClick={() => openModal(node.id)}>
-                    <i className="fas fa-save">Crear</i> {/* Ícono de Font Awesome para "Crear hijo" */}
-                </button>
+                <button className="icon-button" onClick={() => openModal(node.id)}> 
+    <i className="fas fa-plus"></i> {/* Ícono de Font Awesome para crear/agregar */}
+</button>
                 <button className="icon-button" onClick={() => openEditModal(node.id)}>
                     <i className="fas fa-edit">Edit</i> {/* Ícono de Font Awesome para "Editar" */}
                 </button>

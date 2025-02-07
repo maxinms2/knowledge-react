@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 
-export const EditModal = ({onRequestClose,node,onSubmit}) => {
+export const EditModal = ({ onRequestClose, node, onSubmit }) => {
 
     const [formData, setFormData] = useState({
         title: node ? node.title : '',
         content: node ? node.content : '',
-        id:node ? node.id : 0
+        id: node ? node.id : 0
     });
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -23,7 +23,7 @@ export const EditModal = ({onRequestClose,node,onSubmit}) => {
     useEffect(() => {
         if (node) {
             setFormData({
-                id:node.id,
+                id: node.id,
                 title: node.title,
                 content: node.content,
                 createdAt: node.createdAt,
@@ -34,44 +34,46 @@ export const EditModal = ({onRequestClose,node,onSubmit}) => {
 
     return (
         <div className="abrir-modal animacion fadeIn">
-            <div className="modal " style={{ display: "block" }} tabIndex="-1">
-                <div className="modal-dialog" role="document">
+            <div className="modal d-block" tabIndex="-1">
+                <div className="modal-dialog modal-xl modal-dialog-centered">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h5 className="modal-title">
-                                Editar tema
-                            </h5>
+                            <h5 className="modal-title">Editar tema</h5>
                         </div>
                         <div className="modal-body">
                             <form onSubmit={handleSubmit}>
-                                <div>
-                                    <label>Título:</label>
+                                <div className="mb-3">
+                                    <label className="form-label">Título:</label>
                                     <input
                                         type="text"
+                                        className="form-control"
                                         name="title"
                                         value={formData.title}
                                         onChange={handleInputChange}
                                         required
                                     />
                                 </div>
-                                <div>
-                                    <label>Contenido:</label>
+                                <div className="mb-3">
+                                    <label className="form-label">Contenido:</label>
                                     <textarea
+                                        className="form-control textarea-grande"
                                         name="content"
                                         value={formData.content}
                                         onChange={handleInputChange}
                                         required
                                     />
                                 </div>
-
-                                <button type="submit">Guardar</button>
-                                <button type="button" onClick={onRequestClose}>Cancelar</button>
+                                <div className="text-end">
+                                    <button type="submit" className="btn btn-primary me-2">Guardar</button>
+                                    <button type="button" className="btn btn-secondary" onClick={onRequestClose}>Cancelar</button>
+                                </div>
                             </form>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
 
 
 
