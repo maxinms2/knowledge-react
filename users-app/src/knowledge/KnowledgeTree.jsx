@@ -29,6 +29,7 @@ export const KnowledgeTree = () => {
     const location = useLocation();
     const [searchParams] = useSearchParams();
     const [id, setId] = useState(() => getInitialValue('id', 1));
+    const [parent, setParent] = useState('');
     const [deep, setDeep] = useState(1);
     const [treeData, setTreeData] = useState(null); // Datos del árbol
     const [loading, setLoading] = useState(true); // Estado de carga
@@ -66,8 +67,9 @@ export const KnowledgeTree = () => {
     };
 
     // Función para abrir el modal de creación y establecer el parentId
-    const openModal = (id) => {
+    const openModal = (id,title) => {
         setParentId(id);
+        setParent(title);
         setModalIsOpen(true);
     };
 
@@ -162,7 +164,7 @@ export const KnowledgeTree = () => {
         <div key={node.id} className="tree-node">
             <div className="node-content">
                 <span>{node.id}</span>
-                <button className="icon-button" onClick={() => openModal(node.id)} title="Crear nuevo tema">
+                <button className="icon-button" onClick={() => openModal(node.id,node.title)} title="Crear nuevo tema">
                     <i className="fas fa-plus"></i> {/* Ícono de Font Awesome para crear/agregar */}
                 </button>
                 <button className="icon-button" onClick={() => openEditModal(node.id)} title="Editar tema">
@@ -224,7 +226,9 @@ export const KnowledgeTree = () => {
                 {!modalIsOpen ||
                     <CreateModal
                         onRequestClose={closeModal}
-                        onSubmit={handleCreate} />
+                        onSubmit={handleCreate} 
+                        parent={parent}/>
+                        
                 }
 
                 {!editModalIsOpen ||

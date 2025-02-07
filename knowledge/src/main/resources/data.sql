@@ -66,6 +66,11 @@ CREATE TABLE IF NOT EXISTS public.users_roles
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
 );
+
+ALTER TABLE knowledge ADD user_id bigint
+ALTER TABLE knowledge ADD k_type smallint
+ALTER TABLE knowledge ADD CONSTRAINT fk_users 
+	FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE; 
 insert into roles(name) values('ROLE_ADMIN');
 insert into roles(name) values('ROLE_USER');
 

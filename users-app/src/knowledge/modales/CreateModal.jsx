@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export const CreateModal = ({ onRequestClose, onSubmit }) => {
+export const CreateModal = ({ onRequestClose, onSubmit,parent }) => {
 
     const [formData, setFormData] = useState({
         title: '',
@@ -30,7 +30,7 @@ export const CreateModal = ({ onRequestClose, onSubmit }) => {
                     <div className="modal-content">
                         <div className="modal-header">
                             <h5 className="modal-title">
-                            Crear nuevo tema
+                            Crear subtema de "{parent}"
                             </h5>
                         </div>
                         <div className="modal-body">

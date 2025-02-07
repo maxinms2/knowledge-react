@@ -9,15 +9,19 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.andres.backend.usersapp.backendusersapp.exceptions.KnowledgeException;
+import com.andres.backend.usersapp.backendusersapp.helpers.KnowValidations;
 import com.andres.backend.usersapp.backendusersapp.models.dto.KnowledgeDTO;
 import com.andres.backend.usersapp.backendusersapp.models.dto.mapper.KnowledgeMapper;
 import com.andres.backend.usersapp.backendusersapp.models.entities.Knowledge;
+import com.andres.backend.usersapp.backendusersapp.models.entities.User;
 import com.andres.backend.usersapp.backendusersapp.models.utils.PositionTree;
 import com.andres.backend.usersapp.backendusersapp.repositories.KnowledgeRepository;
+import com.andres.backend.usersapp.backendusersapp.repositories.UserRepository;
 import com.andres.backend.usersapp.backendusersapp.utils.Constants;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -27,15 +31,20 @@ public class KnowledgeServiceImpl implements IKnowledgeService {
 
 	private final KnowledgeRepository repository;
 	private final KnowledgeMapper mapper;
+	private final UserRepository userRepository;
+	
+	@Autowired
+	private KnowValidations knowValidations;
 
-	public KnowledgeServiceImpl(KnowledgeRepository repository, KnowledgeMapper mapper) {
+	public KnowledgeServiceImpl(KnowledgeRepository repository, KnowledgeMapper mapper,UserRepository userRepository) {
 		this.repository = repository;
 		this.mapper = mapper;
+		this.userRepository = userRepository;
 	}
 
 	@Transactional
 	public KnowledgeDTO createKnowledge(KnowledgeDTO dto) throws KnowledgeException {
-
+		Knowledge parent=null;
 		Knowledge knowledge = repository.findByTitle(dto.getTitle().trim());
 		if (knowledge != null) {
 			if (dto.getId() == null) {
@@ -52,14 +61,18 @@ public class KnowledgeServiceImpl implements IKnowledgeService {
 		knowledge.setCreatedAt(new Date());
 		knowledge.setUpdatedAt(new Date());
 		if (dto.getParentId() != null) {
-			Knowledge parent = repository.findById(dto.getParentId())
+			parent = repository.findById(dto.getParentId())
 					.orElseThrow(() -> new EntityNotFoundException("Parent not found"));
-			knowledge.setParent(parent);
 		} else {
 			throw new KnowledgeException("Debe tener un tema base", Constants.ERR_KNOWLEDGE);
 		}
-
-
+		knowledge.setParent(parent);
+		knowledge.setType(dto.getType());
+		Optional<User> user=userRepository.findByUsername(dto.getUser());
+		if(!knowValidations.isKnowAuthorizer(dto,user.get())){
+			throw new KnowledgeException("No es el propietario de este tema", Constants.ERR_KNOWLEDGE);
+		}
+		knowledge.setUser(user.get());
 		return mapper.entityToDTO(repository.save(knowledge));
 	}
 
