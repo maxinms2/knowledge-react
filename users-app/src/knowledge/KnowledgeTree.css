@@ -59,3 +59,47 @@
 .close-btn:hover {
   color: red;
 }
+
+
+.icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem; /* Ajusta el tamaño del icono */
+  color: #007bff; /* Color azul */
+}
+
+.icon-button:hover {
+  color: #0056b3; /* Azul más oscuro al pasar el cursor */
+}
+
+
+
+
+.form-container {
+  display: flex;
+  align-items: center; /* Alinear verticalmente */
+  gap: 20px; /* Espaciado entre los elementos */
+  width: 100%;
+}
+
+.form-group {
+  display: flex;
+  align-items: center; /* Alinea label e input en un solo renglón */
+  gap: 10px; /* Espaciado entre label e input */
+}
+
+label {
+  font-size: 1.2rem;
+  font-weight: bold;
+  min-width: 50px; /* Ajusta según el texto más largo */
+  text-align: right;
+}
+
+input {
+  font-size: 1.1rem;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 120px; /* Ajusta según necesidad */
+}

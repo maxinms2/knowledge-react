@@ -57,8 +57,8 @@ export const CreateModal = ({ onRequestClose, onSubmit }) => {
                                     />
                                 </div>
 
-                                <button type="submit">Crear</button>
-                                <button type="button" onClick={onRequestClose}>Cancelar</button>
+                                <button type="submit" className="btn btn-primary me-2">Crear</button>
+                                <button type="button" className="btn btn-secondary" onClick={onRequestClose}>Cancelar</button>
                             </form>
                         </div>
                     </div>

@@ -43,7 +43,6 @@ export const EditModal = ({ onRequestClose, node, onSubmit }) => {
                         <div className="modal-body">
                             <form onSubmit={handleSubmit}>
                                 <div className="mb-3">
-                                    <label className="form-label">Título:</label>
                                     <input
                                         type="text"
                                         className="form-control"
@@ -54,7 +53,6 @@ export const EditModal = ({ onRequestClose, node, onSubmit }) => {
                                     />
                                 </div>
                                 <div className="mb-3">
-                                    <label className="form-label">Contenido:</label>
                                     <textarea
                                         className="form-control textarea-grande"
                                         name="content"
@@ -63,10 +61,10 @@ export const EditModal = ({ onRequestClose, node, onSubmit }) => {
                                         required
                                     />
                                 </div>
-                                <div className="text-end">
+
                                     <button type="submit" className="btn btn-primary me-2">Guardar</button>
                                     <button type="button" className="btn btn-secondary" onClick={onRequestClose}>Cancelar</button>
-                                </div>
+
                             </form>
                         </div>
                     </div>
