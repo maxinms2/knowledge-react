@@ -1,10 +1,11 @@
 import { useLocation, useSearchParams } from 'react-router-dom';
 import './KnowledgeTree.css';
 import { useEffect, useState } from 'react';
-import { tree, save,remove } from '../services/knowledgeService'
+import { tree, save, remove } from '../services/knowledgeService'
 import { CreateModal } from './modales/CreateModal';
 import { EditModal } from './modales/EditModal';
 import Swal from 'sweetalert2';
+import "@fortawesome/fontawesome-free/css/all.min.css";
 
 export const KnowledgeTree = () => {
 
@@ -127,19 +128,19 @@ export const KnowledgeTree = () => {
 
     const deleteNode = async (id) => {
         console.log(id);
-            Swal.fire({
-                title: "¿Estás seguro?",
-                text: "No podrás revertir esta acción. Se borrarán todos los hijos.",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonText: "Continuar",
-                cancelButtonText: "Cancelar",
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    console.log('id: '+id);
-                    deleteNodeAsync(id);
-                } 
-            });
+        Swal.fire({
+            title: "¿Estás seguro?",
+            text: "No podrás revertir esta acción. Se borrarán todos los hijos.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Continuar",
+            cancelButtonText: "Cancelar",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                console.log('id: ' + id);
+                deleteNodeAsync(id);
+            }
+        });
     };
 
     const updateTree = (id) => {
@@ -158,20 +159,20 @@ export const KnowledgeTree = () => {
         <div key={node.id} className="tree-node">
             <div className="node-content">
                 <span>{node.id}</span>
-                <button className="icon-button" onClick={() => openModal(node.id)}>
-                    <i className="fas fa-save">Crear</i> {/* Ícono de Font Awesome para "Crear hijo" */}
+                <button className="icon-button" onClick={() => openModal(node.id)} title="Crear nuevo tema">
+                    <i className="fas fa-plus"></i> {/* Ícono de Font Awesome para crear/agregar */}
                 </button>
-                <button className="icon-button" onClick={() => openEditModal(node.id)}>
-                    <i className="fas fa-edit">Edit</i> {/* Ícono de Font Awesome para "Editar" */}
+                <button className="icon-button" onClick={() => openEditModal(node.id)} title="Editar tema">
+                    <i className="fas fa-edit"></i> {/* Ícono de Font Awesome para "Editar" */}
                 </button>
-                <button className="icon-button" onClick={() => deleteNode(node.id)}>
-                    <i className="fas fa-trash">Delete</i> {/* Ícono de Font Awesome para "Editar" */}
+                <button className="icon-button" onClick={() => deleteNode(node.id)} title="Eliminar tema">
+                    <i className="fas fa-trash"></i> {/* Ícono de Font Awesome para "Editar" */}
                 </button>
-                <button className="icon-button" onClick={() => updateTree(node.parentId)}>
-                    <i className="fas fa-arrow-left">&lt;</i> {/* Ícono de Font Awesome para "Editar" */}
+                <button className="icon-button" onClick={() => updateTree(node.parentId)} title="Ver temas del tema base">
+                    <i className="fas fa-arrow-left"></i> {/* Ícono de Font Awesome para "Editar" */}
                 </button>
-                <button className="icon-button" onClick={() => updateTree(node.id)}>
-                    <i className="fas fa-arrow-right">&gt;</i> {/* Ícono de Font Awesome para "Editar" */}
+                <button className="icon-button" onClick={() => updateTree(node.id)} title="Ver subtemas">
+                    <i className="fas fa-arrow-right"></i> {/* Ícono de Font Awesome para "Editar" */}
                 </button>
                 <span>{node.title}</span>
             </div>
@@ -191,22 +192,31 @@ export const KnowledgeTree = () => {
         <div className="knowledge-tree">
             <h1>Árbol de temas</h1>
             <div>
-                <label>ID:</label>
-                <input
-                    type="number"
-                    value={id}
-                    onChange={(e) => setId(e.target.value)}
-                    required
-                />
-                <div>
-                    <label>Deep:</label>
-                    <input
-                        type="number"
-                        value={deep}
-                        onChange={(e) => setDeep(e.target.value)}
-                        required
-                    />
-                </div>
+            <div className="form-container">
+            <div className="form-container">
+    <div className="form-group">
+        <label>ID:</label>
+        <input
+            type="number"
+            value={id}
+            onChange={(e) => setId(e.target.value)}
+            required
+        />
+    </div>
+
+    <div className="form-group">
+        <label>Deep:</label>
+        <input
+            type="number"
+            value={deep}
+            onChange={(e) => setDeep(e.target.value)}
+            required
+        />
+    </div>
+</div>
+
+</div>
+
                 {treeData && renderTree(treeData)}
                 {!modalIsOpen ||
                     <CreateModal

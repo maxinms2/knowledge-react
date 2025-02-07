@@ -36,26 +36,7 @@ export const UserForm = ({ userSelected, handlerCloseForm }) => {
 
     const onSubmit = (event) => {
         event.preventDefault();
-        // if (!username || (!password && id === 0) || !email) {
-        //     Swal.fire(
-        //         'Error de validacion',
-        //         'Debe completar los campos del formulario!',
-        //         'error'
-        //     );
 
-        //     return;
-        // }
-        // if (!email.includes('@')) {
-        //     Swal.fire(
-        //         'Error de validacion email',
-        //         'El email debe ser valido, incluir un @!',
-        //         'error'
-        //     );
-        //     return;
-        // }
-        // console.log(userForm);
-
-        // guardar el user form en el listado de usuarios
         handlerAddUser(userForm);
     }
 

@@ -2,9 +2,9 @@ import { useLocation, useSearchParams } from 'react-router-dom';
 import './KnowledgeTree.css';
 import { useEffect, useState } from 'react';
 import { tree, save, remove } from '../services/knowledgeService'
+import { messageError } from '../services/messages'
 import { CreateModal } from './modales/CreateModal';
 import { EditModal } from './modales/EditModal';
-import Swal from 'sweetalert2';
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
 export const KnowledgeTree = () => {
@@ -94,6 +94,7 @@ export const KnowledgeTree = () => {
             setSelectedNode(response.data); // Guardar la información del nodo
             setEditModalIsOpen(true); // Abrir el modal de edición
         } catch (err) {
+            
             messageError("Error inesperado", "Por favor, intente más tarde");
 
         }
@@ -101,6 +102,7 @@ export const KnowledgeTree = () => {
     // Función para manejar la creación de un nuevo objeto
     const handleCreate = async (formData) => {
         try {
+            console.log("ojo");
             // Crear el nuevo nodo
             console.log("parent: " + parentId);
             const response = await save({
@@ -113,7 +115,8 @@ export const KnowledgeTree = () => {
             closeModal(); // Cerrar el modal de creación
             closeEditModal();
         } catch (err) {
-
+            console.error("Error crear");
+            messageError("Error inesperado", "Por favor, intente más tarde");
         }
     };
 

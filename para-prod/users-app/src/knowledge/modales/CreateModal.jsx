@@ -25,8 +25,8 @@ export const CreateModal = ({ onRequestClose, onSubmit }) => {
 
     return (
         <div className="abrir-modal animacion fadeIn">
-            <div className="modal " style={{ display: "block" }} tabIndex="-1">
-                <div className="modal-dialog" role="document">
+            <div className="modal d-block" tabIndex="-1">
+                <div className="modal-dialog modal-xl modal-dialog-centered">
                     <div className="modal-content">
                         <div className="modal-header">
                             <h5 className="modal-title">
@@ -36,9 +36,10 @@ export const CreateModal = ({ onRequestClose, onSubmit }) => {
                         <div className="modal-body">
                             <form onSubmit={handleSubmit}>
                                 <div>
-                                    <label>Título:</label>
+                                    <label className="form-label">Título:</label>
                                     <input
                                         type="text"
+                                        className="form-control"
                                         name="title"
                                         value={formData.title}
                                         onChange={handleInputChange}
@@ -46,17 +47,18 @@ export const CreateModal = ({ onRequestClose, onSubmit }) => {
                                     />
                                 </div>
                                 <div>
-                                    <label>Contenido:</label>
+                                    <label className="form-label">Contenido:</label>
                                     <textarea
                                         name="content"
+                                        className="form-control textarea-grande"
                                         value={formData.content}
                                         onChange={handleInputChange}
                                         required
                                     />
                                 </div>
 
-                                <button type="submit">Crear</button>
-                                <button type="button" onClick={onRequestClose}>Cancelar</button>
+                                <button type="submit" className="btn btn-primary me-2">Crear</button>
+                                <button type="button" className="btn btn-secondary" onClick={onRequestClose}>Cancelar</button>
                             </form>
                         </div>
                     </div>

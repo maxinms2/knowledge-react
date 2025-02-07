@@ -104,11 +104,11 @@ export const KnowledgeSearch = () => {
                             <tr key={result.id} className="border-t border-gray-300">
                                 <td className="border border-gray-300 px-4 py-2">
                                     <button className="icon-button" onClick={() => openEditModal(result)}>
-                                        <i className="fas fa-file">Abrir</i> {/* Ícono de Font Awesome para "Crear hijo" */}
+                                        <i className="fas fa-file"></i> {/* Ícono de Font Awesome para "Crear hijo" */}
                                     </button>
                                 </td>
                                 <Link to={`/know/tree?id=${result.id}`}>
-                                    Árbol de temas
+                                    Ir a subtemas
                                 </Link>
                                 <td className="px-4 py-2">{result.content}</td>
                             </tr>
