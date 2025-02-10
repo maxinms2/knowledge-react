@@ -21,6 +21,7 @@ public class KnowledgeMapper {
 		dto.setChildren(new ArrayList<>());
 		dto.setCreatedAt(db.getCreatedAt());
 		dto.setUpdatedAt(db.getUpdatedAt());
+		dto.setTipo(db.getTipo());
 		return dto;
 	}
 	
@@ -30,6 +31,7 @@ public class KnowledgeMapper {
 		db.setTitle(dto.getTitle());
 		db.setCreatedAt(new Date());
 		db.setUpdatedAt(new Date());
+		db.setTipo(dto.getTipo());
 		return db;
 	}
 

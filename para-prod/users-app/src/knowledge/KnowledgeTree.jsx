@@ -2,10 +2,11 @@ import { useLocation, useSearchParams } from 'react-router-dom';
 import './KnowledgeTree.css';
 import { useEffect, useState } from 'react';
 import { tree, save, remove } from '../services/knowledgeService'
+import { messageError } from '../services/messages'
 import { CreateModal } from './modales/CreateModal';
 import { EditModal } from './modales/EditModal';
-import Swal from 'sweetalert2';
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import Swal from 'sweetalert2';
 
 export const KnowledgeTree = () => {
 
@@ -29,7 +30,9 @@ export const KnowledgeTree = () => {
     const location = useLocation();
     const [searchParams] = useSearchParams();
     const [id, setId] = useState(() => getInitialValue('id', 1));
+    const [parent, setParent] = useState('');
     const [deep, setDeep] = useState(1);
+    const [parentNode, setParentNode] = useState(0);
     const [treeData, setTreeData] = useState(null); // Datos del árbol
     const [loading, setLoading] = useState(true); // Estado de carga
     const [error, setError] = useState(null); // Manejo de errores
@@ -37,6 +40,7 @@ export const KnowledgeTree = () => {
     const [editModalIsOpen, setEditModalIsOpen] = useState(false); // Estado del modal de edición
     const [parentId, setParentId] = useState(null); // ID del padre para el nuevo objeto
     const [selectedNode, setSelectedNode] = useState(null); // Nodo seleccionado para editar
+    const [tipo, setTipo] = useState(0);
     // Obtener los datos del árbol al cargar el componente
     useEffect(() => {
         fetchTreeData();
@@ -66,9 +70,11 @@ export const KnowledgeTree = () => {
     };
 
     // Función para abrir el modal de creación y establecer el parentId
-    const openModal = (id) => {
+    const openModal = (id, title, tipoNod) => {
         setParentId(id);
+        setParent(title);
         setModalIsOpen(true);
+        setTipo(tipoNod);
     };
 
     // Función para cerrar el modal de creación
@@ -83,9 +89,10 @@ export const KnowledgeTree = () => {
     };
 
     // Función para abrir el modal de edición y obtener la información del nodo
-    const openEditModal = async (id) => {
+    const openEditModal = async (id, parentNodeId,tipoNod) => {
         try {
             setParentId(null);
+            setParentNode(parentNodeId);
             const response = await tree({
                 deep: 1,
                 id: id
@@ -93,7 +100,9 @@ export const KnowledgeTree = () => {
             // console.log("node===="+response.data);
             setSelectedNode(response.data); // Guardar la información del nodo
             setEditModalIsOpen(true); // Abrir el modal de edición
+            setTipo(tipoNod);
         } catch (err) {
+
             messageError("Error inesperado", "Por favor, intente más tarde");
 
         }
@@ -101,8 +110,10 @@ export const KnowledgeTree = () => {
     // Función para manejar la creación de un nuevo objeto
     const handleCreate = async (formData) => {
         try {
+            console.log("ojo");
             // Crear el nuevo nodo
             console.log("parent: " + parentId);
+            console.log("type: " + formData.tipo);
             const response = await save({
                 ...formData,
                 parentId: parentId // Usar el parentId del nodo seleccionado
@@ -113,7 +124,7 @@ export const KnowledgeTree = () => {
             closeModal(); // Cerrar el modal de creación
             closeEditModal();
         } catch (err) {
-
+            messageError("Error", err.message);
         }
     };
 
@@ -122,7 +133,13 @@ export const KnowledgeTree = () => {
             await remove(id);
             await fetchTreeData();
         } catch (err) {
-            messageError("Error inesperado", "Por favor, intente más tarde");
+            console.log("Errorrrr: "+err.status)
+            if(err.status==403){
+                messageError("Error", "No es el creador del tema");
+            }else{
+                messageError("Error", "Error inesperado, inténtelo nuevamente");
+            }
+            
         }
     };
 
@@ -159,10 +176,10 @@ export const KnowledgeTree = () => {
         <div key={node.id} className="tree-node">
             <div className="node-content">
                 <span>{node.id}</span>
-                <button className="icon-button" onClick={() => openModal(node.id)} title="Crear nuevo tema">
+                <button className="icon-button" onClick={() => openModal(node.id, node.title, node.tipo)} title="Crear nuevo tema">
                     <i className="fas fa-plus"></i> {/* Ícono de Font Awesome para crear/agregar */}
                 </button>
-                <button className="icon-button" onClick={() => openEditModal(node.id)} title="Editar tema">
+                <button className="icon-button" onClick={() => openEditModal(node.id, node.parentId, node.tipo)} title="Editar tema">
                     <i className="fas fa-edit"></i> {/* Ícono de Font Awesome para "Editar" */}
                 </button>
                 <button className="icon-button" onClick={() => deleteNode(node.id)} title="Eliminar tema">
@@ -192,36 +209,41 @@ export const KnowledgeTree = () => {
         <div className="knowledge-tree">
             <h1>Árbol de temas</h1>
             <div>
-            <div className="form-container">
-            <div className="form-container">
-    <div className="form-group">
-        <label>ID:</label>
-        <input
-            type="number"
-            value={id}
-            onChange={(e) => setId(e.target.value)}
-            required
-        />
-    </div>
+                <div className="form-container">
+                    <div className="form-container">
+                        <div className="form-group">
+                            <label>ID:</label>
+                            <input
+                                type="number"
+                                value={id}
+                                onChange={(e) => setId(e.target.value)}
+                                required
+                            />
+                        </div>
 
-    <div className="form-group">
-        <label>Deep:</label>
-        <input
-            type="number"
-            value={deep}
-            onChange={(e) => setDeep(e.target.value)}
-            required
-        />
-    </div>
-</div>
+                        <div className="form-group">
+                            <label>Deep:</label>
+                            <input
+                                type="number"
+                                value={deep}
+                                onChange={(e) => setDeep(e.target.value)}
+                                required
+                            />
+                        </div>
+                    </div>
 
-</div>
+                </div>
 
                 {treeData && renderTree(treeData)}
                 {!modalIsOpen ||
                     <CreateModal
                         onRequestClose={closeModal}
-                        onSubmit={handleCreate} />
+                        onSubmit={handleCreate}
+                        parent={parent}
+                        id={parentId}
+                        tipo={tipo}
+                    />
+
                 }
 
                 {!editModalIsOpen ||
@@ -229,6 +251,8 @@ export const KnowledgeTree = () => {
                         onRequestClose={closeEditModal}
                         node={selectedNode}
                         onSubmit={handleCreate}
+                        parent={parentNode}
+                        tipo={tipo}
                     />
                 }
             </div>

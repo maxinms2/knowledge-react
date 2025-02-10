@@ -10,6 +10,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,7 +57,9 @@ public class KnowledgeServiceImpl implements IKnowledgeService {
 
 		if (dto.getId() == null) {
 			knowledge = new Knowledge();
-		} 
+		}else {
+			knowledge=repository.findById(dto.getId()).get();
+		}
 		knowledge.setTitle(dto.getTitle());
 		knowledge.setContent(dto.getContent());
 		knowledge.setCreatedAt(new Date());
@@ -67,13 +71,42 @@ public class KnowledgeServiceImpl implements IKnowledgeService {
 			throw new KnowledgeException("Debe tener un tema base", Constants.ERR_KNOWLEDGE);
 		}
 		knowledge.setParent(parent);
-		knowledge.setType(dto.getType());
-		Optional<User> user=userRepository.findByUsername(dto.getUser());
-		if(!knowValidations.isKnowAuthorizer(dto,user.get())){
+		Short tipoActual=knowledge.getTipo();
+		if(parent.getTipo()==Constants.KNOW_PRIVATE) {
+			knowledge.setTipo(parent.getTipo());
+		}else {
+			knowledge.setTipo(dto.getTipo());
+		}
+		
+//		if(parent.getId()>1) {
+//			knowledge.setTipo(parent.getTipo());
+//		}else {
+//			knowledge.setTipo(dto.getTipo());
+//		}
+		
+		if(dto.getTipo()!=tipoActual && dto.getId()!=null && parent.getTipo()==Constants.KNOW_PUBLIC) {
+			recursiveType(knowledge,dto.getTipo());
+		}
+
+		
+
+	
+		if(!knowValidations.isKnowAuthorizer(knowledge)){
 			throw new KnowledgeException("No es el propietario de este tema", Constants.ERR_KNOWLEDGE);
 		}
-		knowledge.setUser(user.get());
 		return mapper.entityToDTO(repository.save(knowledge));
+	}
+	
+	
+
+	private void recursiveType(Knowledge knowledge,Short tipo) {
+		if(knowledge.getChildren().isEmpty()) {
+			knowledge.setTipo(tipo);
+			return;
+		}
+		knowledge.setTipo(tipo);
+		knowledge.getChildren().forEach(child-> recursiveType(child, tipo));
+		
 	}
 
 	@Transactional(readOnly = true)
@@ -111,7 +144,14 @@ public class KnowledgeServiceImpl implements IKnowledgeService {
 		if (positionTree.getDeep() == 0 || Knowledges.isEmpty()) {
 			return dto;
 		}
-		Knowledges.forEach(k -> dto.getChildren()
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Optional<User> userAuthentication=userRepository.findByUsername(authentication.getName());
+		Boolean isAdmin=userAuthentication.get().getRoles().stream()
+					.anyMatch(r->r.getName().equals("ROLE_ADMIN"));
+		
+		Knowledges.stream().filter(x->x.getUser().getUsername().equals(authentication.getName()) || isAdmin || 
+		x.getTipo()==Constants.KNOW_PUBLIC).collect(Collectors.toList()).forEach(k -> dto.getChildren()
 				.add(getKnowledge(new PositionTree(positionTree.getDeep() - 1, k.getId()), entityToDTO(k))));
 		return dto;
 	}
@@ -125,14 +165,23 @@ public class KnowledgeServiceImpl implements IKnowledgeService {
 		dto.setParentId(knowledge.getParent().getId());
 		dto.setTitle(knowledge.getTitle());
 		dto.setUpdatedAt(knowledge.getUpdatedAt());
+		dto.setTipo(knowledge.getTipo());
 		return dto;
 	}
 
 	@Override
 	@Transactional
-	public void delete(Long rootId) {
-		if (rootId > 1) {
-			repository.deleteById(rootId);
+	public void delete(Long id) {
+		if (id > 1) {
+			Knowledge knowledge=repository.findById(id).get();
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			User userAuthenticated = userRepository.findByUsername(authentication.getName()).get();
+			if(knowValidations.isEqualsToUserAuthenticated(knowledge.getUser().getUsername(), userAuthenticated)) {
+				repository.deleteById(id);
+			}else {
+				throw new KnowledgeException("No es el propietario de este tema", Constants.ERR_KNOWLEDGE);
+			}
+			
 		}
 
 	}
@@ -141,7 +190,14 @@ public class KnowledgeServiceImpl implements IKnowledgeService {
 	@Transactional(readOnly = true)
 	public List<KnowledgeDTO> findByText(String text) {
 		List<Knowledge> knowledges = repository.findByText(text);
-		List<KnowledgeDTO> knowledgesDTO = knowledges.stream().map(k -> mapper.entityToDTO(k))
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Optional<User> userAuthentication=userRepository.findByUsername(authentication.getName());
+		Boolean isAdmin=userAuthentication.get().getRoles().stream()
+					.anyMatch(r->r.getName().equals("ROLE_ADMIN"));
+
+		List<KnowledgeDTO> knowledgesDTO = knowledges.stream()
+				.filter(x->x.getUser().getUsername().equals(authentication.getName()) 
+				|| isAdmin || x.getTipo()==Constants.KNOW_PUBLIC).map(k -> mapper.entityToDTO(k))
 				.sorted(Comparator.comparing((k -> k.getTitle().toLowerCase()))).collect(Collectors.toList());
 		return knowledgesDTO;
 	}

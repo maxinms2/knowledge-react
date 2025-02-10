@@ -27,19 +27,19 @@ export const tree = async ({ deep,id }) => {
     }
 };
 
-export const save = async ({ title,content,parent,id,parentId }) => {
+export const save = async ({ title,content,parent,id,parentId,tipo }) => {
     try {
         const response= await knowledgeApi.post(`${BASE_URL}`, {
             id,
             title,
             content,
             parent,
-            parentId
+            parentId,
+            tipo
         });
         return response;
     } catch (error) {
-        console.log("error1: " +error);
-        throw error;
+        lanzaError(error);
     }
 };
 
@@ -48,6 +48,29 @@ export const remove = async (id) => {
         await knowledgeApi.delete(`${BASE_URL}/${id}`);
     } catch (error) {
         throw error;
+        //lanzaError(error);
     }
+}
+
+const lanzaError=(error)=>{
+    let errorMessage = "Ocurrió un error inesperado.";
+    let errorStatus = "Desconocido";
+
+    if (error.response) {
+        errorStatus = error.response.status;
+        // Verifica si el mensaje es un objeto y conviértelo a string si es necesario
+        if (typeof error.response.data === "object") {
+            errorMessage = JSON.stringify(error.response.data);
+        } else {
+            errorMessage = error.response.data;
+        }
+    } else if (error.message) {
+        errorMessage = error.message;
+    }
+    if(err)
+    console.log("err serv: "+errorStatus);
+    // Lanza el error como objeto con `status` y `message`
+    throw { status: errorStatus, message: errorMessage };
+
 }
 

@@ -61,7 +61,7 @@ public class Knowledge {
     private User user;
     
     @Column(name="k_type")
-    private Short type;
+    private Short tipo;
 
 	public Long getId() {
 		return id;
@@ -127,12 +127,12 @@ public class Knowledge {
 		this.user = user;
 	}
 
-	public Short getType() {
-		return type;
+	public Short getTipo() {
+		return tipo;
 	}
 
-	public void setType(Short type) {
-		this.type = type;
+	public void setTipo(Short tipo) {
+		this.tipo = tipo;
 	}
 
 	@Override

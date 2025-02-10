@@ -94,9 +94,9 @@ export const KnowledgeSearch = () => {
                 <table className="w-full border-collapse border border-gray-300">
                     <thead>
                         <tr className="bg-gray-100">
-                            <th className="border border-gray-300 px-4 py-2 text-left">ID</th>
-                            <th className="border border-gray-300 px-4 py-2 text-left">Title</th>
-                            <th className="border border-gray-300 px-4 py-2 text-left">Content</th>
+                            <th className="border border-gray-300 px-4 py-2 text-left">Detalle</th>
+                            <th className="border border-gray-300 px-4 py-2 text-left">Subtemas</th>
+                            <th className="border border-gray-300 px-4 py-2 text-left">Título</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -108,9 +108,9 @@ export const KnowledgeSearch = () => {
                                     </button>
                                 </td>
                                 <Link to={`/know/tree?id=${result.id}`}>
-                                    Ir a subtemas
+                                    Subtemas
                                 </Link>
-                                <td className="px-4 py-2">{result.content}</td>
+                                <td className="px-4 py-2">{result.title}</td>
                             </tr>
                         ))}
                     </tbody>

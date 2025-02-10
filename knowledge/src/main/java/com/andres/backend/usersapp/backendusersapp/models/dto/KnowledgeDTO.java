@@ -11,8 +11,7 @@ public class KnowledgeDTO {
 	private List<KnowledgeDTO> children;
 	private Date createdAt;
 	private Date updatedAt;
-	private String user;
-	private Short type;
+	private Short tipo;
 	
 	public Long getId() {
 		return id;
@@ -53,17 +52,11 @@ public class KnowledgeDTO {
 	public Date getUpdatedAt() {
 		return updatedAt;
 	}
-	public String getUser() {
-		return user;
+	public Short getTipo() {
+		return tipo;
 	}
-	public void setUser(String user) {
-		this.user = user;
-	}
-	public Short getType() {
-		return type;
-	}
-	public void setType(Short type) {
-		this.type = type;
+	public void setTipo(Short tipo) {
+		this.tipo = tipo;
 	}
 	public void setUpdatedAt(Date updatedAt) {
 		this.updatedAt = updatedAt;

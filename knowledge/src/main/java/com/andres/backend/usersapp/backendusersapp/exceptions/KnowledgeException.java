@@ -1,6 +1,6 @@
 package com.andres.backend.usersapp.backendusersapp.exceptions;
 
-public class KnowledgeException extends Exception{
+public class KnowledgeException extends RuntimeException{
 	
 	private Integer errorCode;
 	
