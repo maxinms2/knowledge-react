@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import FileUploadDownload from '../FileUploadDownload';
 
 export const EditModal = ({ onRequestClose, node, onSubmit, parent, tipo }) => {
 
@@ -12,6 +13,7 @@ export const EditModal = ({ onRequestClose, node, onSubmit, parent, tipo }) => {
         e.preventDefault();
         onSubmit(formData);
     };
+
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -66,21 +68,32 @@ export const EditModal = ({ onRequestClose, node, onSubmit, parent, tipo }) => {
                                         required
                                     />
                                 </div>
-                                <div className="mb-3">
+                                <div className="mb-2">
                                     <textarea
-                                        className="form-control textarea-grande"
+                                        className="form-control form-control-sm"
                                         name="content"
                                         value={formData.content}
                                         onChange={handleInputChange}
                                         required
+                                        rows="3" // Reduce el número de líneas visibles
+                                        style={{ height: "200px" }} // También puedes ajustar manualmente la altura
                                     />
                                 </div>
 
-                                <button type="submit" className="btn btn-primary me-2">Guardar</button>
-                                <button type="button" className="btn btn-secondary" onClick={onRequestClose}>Cancelar</button>
+
+                                {/* Componente de carga y descarga de archivos */}
+                                <FileUploadDownload idKnow={node.id} />
+
+                                {/* Botones de acción */}
+                                <div className="mt-3">
+                                    <button type="submit" className="btn btn-primary me-2">Guardar</button>
+                                    <button type="button" className="btn btn-secondary" onClick={onRequestClose}>Cancelar</button>
+                                </div>
+
 
                             </form>
                         </div>
+
                     </div>
                 </div>
             </div>

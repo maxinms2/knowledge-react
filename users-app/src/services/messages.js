@@ -18,6 +18,15 @@ export const messageError = (title, message) => {
     });
 };
 
+export const warningError = (title, message) => {
+    Swal.fire({
+        title: title,
+        text: message,
+        icon: "warning",
+        confirmButtonText: "Aceptar"
+    });
+};
+
 export const confirmMessage = async (title, message) => {
     const result= Swal.fire({
         title: title,

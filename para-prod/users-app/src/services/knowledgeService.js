@@ -15,6 +15,7 @@ export const find = async ({ content }) => {
 };
 
 export const tree = async ({ deep,id }) => {
+    console.log('BASE_URL0: '+ BASE_URL);
     try {
         const response= await knowledgeApi.post(`${BASE_URL}/children`, {
             deep,
@@ -55,7 +56,7 @@ export const remove = async (id) => {
 const lanzaError=(error)=>{
     let errorMessage = "Ocurrió un error inesperado.";
     let errorStatus = "Desconocido";
-
+    console.log('error: '+error.message );
     if (error.response) {
         errorStatus = error.response.status;
         // Verifica si el mensaje es un objeto y conviértelo a string si es necesario

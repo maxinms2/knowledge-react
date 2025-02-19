@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import FileUploadDownload from "../FileUploadDownload";
 
 export const CreateModal = ({ onRequestClose, onSubmit, id,parent ,tipo}) => {
 
